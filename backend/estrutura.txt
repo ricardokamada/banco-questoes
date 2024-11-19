@@ -1,0 +1,39 @@
+backend/
+├── src/
+│   ├── controllers/       # Lógica de controle (ex.: login, cadastro, relatórios)
+│   ├── models/            # Lógica de acesso ao banco de dados (ORM/queries SQL)
+│   ├── routes/            # Rotas para APIs
+│   ├── middlewares/       # Funções intermediárias (ex.: autenticação)
+│   ├── utils/             # Funções utilitárias (ex.: validações, helpers)
+│   ├── config/            # Configuração do projeto (ex.: conexão com PostgreSQL)
+│   ├── app.js             # Configuração inicial do servidor Express
+│   └── server.js          # Inicialização do servidor
+├── package.json           # Dependências e scripts do projeto
+├── .env                   # Variáveis de ambiente (ex.: credenciais do PostgreSQL)
+└── README.md              # Documentação do backend
+
+-----------------------------
+
+express: Framework para criar o servidor HTTP.
+pg: Biblioteca para conectar ao PostgreSQL.
+bcrypt: Para criptografar senhas.
+jsonwebtoken: Para autenticação com tokens JWT.
+dotenv: Para gerenciar variáveis de ambiente.
+body-parser: Para processar dados JSON no corpo das requisições.
+
+-----------------------------
+
+
+
+Vamos implementar os endpoints para o cadastro, listagem, edição e exclusão de questões. Seguindo a estrutura separada que configuramos, adicionaremos novos arquivos e funções no backend.
+
+Estrutura Atualizada para as Rotas de Questões
+backend/
+├── src/
+│   ├── controllers/
+│   │   └── questionController.js  # Controlador para as questões
+│   ├── routes/
+│   │   └── questionRoutes.js      # Rotas para as questões
+│   ├── middlewares/
+│   │   └── authMiddleware.js      # Middleware para autenticação e autorização
+│   └── ...

@@ -1,0 +1,18 @@
+# Ignorar node_modules
+node_modules/
+
+# Ignorar arquivos de logs
+*.log
+npm-debug.log*
+
+# Ignorar diretórios temporários
+.cache/
+.temp/
+
+# Ignorar variáveis de ambiente
+.env
+
+# Ignorar arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
