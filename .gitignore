@@ -16,3 +16,7 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 desktop.ini
+
+
+# Ignorar instalador PostgreSQL
+instalador-postgreSQL/
