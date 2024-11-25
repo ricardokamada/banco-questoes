@@ -1,8 +1,8 @@
 select (nome) from usuarios where nome = 'administrador';
 
-select * from usuarios;
+select * from usuarios; --  OK
 
-select * from bancas;
+select * from bancas; -- OK
 
 select * from disciplinas; --OK
 

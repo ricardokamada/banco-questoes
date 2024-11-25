@@ -29,7 +29,7 @@ exports.listUsuarios = async () => {
 // Atualizar uma usuario
 exports.updateUsuario = async (id, nome) => {
     const result = await pool.query(
-        `UPDATE usuarios SET nome = $1 WHERE nome_id = $2 RETURNING *`,
+        `UPDATE usuarios SET nome = $1 WHERE usuario_id = $2 RETURNING *`,
         [nome, id]
     );
     return result.rows[0];
