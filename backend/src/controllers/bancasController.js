@@ -1,75 +1,81 @@
-const pool = require('../config/db');
+const bancasModel = require('../models/bancasModel'); // Importa o modelo
 
-// Criar banca
+// Criar uma banca
 exports.createBanca = async (req, res) => {
-  const { nome_banca } = req.body;
+    const { nome_banca } = req.body;
 
-  if (!nome_banca) {
-    return res.status(400).json({ error: 'O campo "nome_banca" é obrigatório.' });
-  }
+    if (!nome_banca) {
+        return res.status(400).json({ error: 'Nome da banca é obrigatório.' });
+    }
 
-  try {
-    const result = await pool.query(
-      `INSERT INTO bancas (nome_banca) VALUES ($1) RETURNING *`,
-      [nome_banca]
-    );
-    res.status(201).json({ banca: result.rows[0] });
-  } catch (err) {
-    console.error('Erro ao criar banca:', err.message);
-    res.status(500).json({ error: 'Erro ao criar banca.', details: err.message });
-  }
+    try {
+        const result = await bancasModel.createBanca(nome_banca);
+
+        res.status(201).json({
+            message: 'Banca criada com sucesso.',
+            banca: result,
+        });
+    } catch (err) {
+        console.error('Erro ao criar a banca:', err.message);
+        res.status(500).json({ error: 'Erro ao criar banca.' });
+    }
 };
 
-// Listar bancas
+// Listar todas as bancas
 exports.listBancas = async (req, res) => {
-  try {
-    const result = await pool.query(`SELECT * FROM bancas`);
-    res.json({ bancas: result.rows });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao listar bancas.', details: err.message });
-  }
+    try {
+        const result = await bancasModel.listBancas();
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Erro ao listar bancas:', err.message);
+        res.status(500).json({ error: 'Erro ao listar bancas.' });
+    }
 };
 
-// Atualizar banca
+// Atualizar uma banca
 exports.updateBanca = async (req, res) => {
-  const { id } = req.params;
-  const { nome_banca } = req.body;
+    const { id } = req.params;
+    const { nome_banca } = req.body;
 
-  if (!nome_banca) {
-    return res.status(400).json({ error: 'O campo "nome_banca" é obrigatório.' });
-  }
-
-  try {
-    const result = await pool.query(
-      `UPDATE bancas SET nome_banca = $1 WHERE banca_id = $2 RETURNING *`,
-      [nome_banca, id]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Banca não encontrada.' });
+    if (!id || !nome_banca) {
+        return res.status(400).json({ error: 'ID e nome da banca são obrigatórios.' });
     }
 
-    res.json({ banca: result.rows[0] });
-  } catch (err) {
-    console.error('Erro ao atualizar banca:', err.message);
-    res.status(500).json({ error: 'Erro ao atualizar banca.', details: err.message });
-  }
+    try {
+        const result = await bancasModel.updateBanca(id, nome_banca);
+
+        if (!result) {
+            return res.status(404).json({ error: 'Banca não encontrada.' });
+        }
+
+        res.status(200).json({
+            message: 'Banca atualizada com sucesso.',
+            banca: result,
+        });
+    } catch (err) {
+        console.error('Erro ao atualizar a banca:', err.message);
+        res.status(500).json({ error: 'Erro ao atualizar banca.' });
+    }
 };
 
-// Deletar banca
+// Deletar uma banca
 exports.deleteBanca = async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-    const result = await pool.query(`DELETE FROM bancas WHERE banca_id = $1`, [id]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Banca não encontrada.' });
+    if (!id) {
+        return res.status(400).json({ error: 'ID da banca é obrigatório.' });
     }
 
-    res.json({ message: 'Banca deletada com sucesso.' });
-  } catch (err) {
-    console.error('Erro ao deletar banca:', err.message);
-    res.status(500).json({ error: 'Erro ao deletar banca.', details: err.message });
-  }
+    try {
+        const result = await bancasModel.deleteBanca(id);
+
+        if (result === 0) {
+            return res.status(404).json({ error: 'Banca não encontrada.' });
+        }
+
+        res.status(200).json({ message: 'Banca deletada com sucesso.' });
+    } catch (err) {
+        console.error('Erro ao deletar a banca:', err.message);
+        res.status(500).json({ error: 'Erro ao deletar banca.' });
+    }
 };
