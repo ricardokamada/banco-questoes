@@ -9,6 +9,10 @@ require('dotenv').config(); // Certifique-se de que as variáveis de ambiente es
 exports.register = async (req, res) => {
   const { nome, email, senha } = req.body;
 
+  console.log('Email recebido:', email);
+  console.log('Usuário encontrado:', user);
+
+
   if (!nome || !email || !senha) {
     return res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' });
   }

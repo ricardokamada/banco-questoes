@@ -22,14 +22,9 @@ exports.createQuestao = async (req, res) => {
         !disciplina_id ||
         !cargo_id ||
         !ano_prova ||
-        !alternativa_correta ||
-        !alternativa_a ||
-        !alternativa_b ||
-        !alternativa_c ||
-        !alternativa_d ||
-        !alternativa_e
+        !alternativa_correta
     ) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+        return res.status(400).json({ error: 'Campos obrigatórios estão ausentes.' });
     }
 
     try {
@@ -40,11 +35,11 @@ exports.createQuestao = async (req, res) => {
             cargo_id,
             ano_prova,
             alternativa_correta,
-            alternativa_a,
-            alternativa_b,
-            alternativa_c,
-            alternativa_d,
-            alternativa_e,
+            alternativa_a: alternativa_a || null,
+            alternativa_b: alternativa_b || null,
+            alternativa_c: alternativa_c || null,
+            alternativa_d: alternativa_d || null,
+            alternativa_e: alternativa_e || null,
         });
 
         res.status(201).json({
@@ -56,6 +51,7 @@ exports.createQuestao = async (req, res) => {
         res.status(500).json({ error: 'Erro ao criar questão.' });
     }
 };
+
 
 // Listar todas as questões
 exports.listQuestoes = async (req, res) => {

@@ -37,16 +37,17 @@ exports.createQuestao = async ({
         cargo_id,
         ano_prova,
         alternativa_correta,
-        alternativa_a,
-        alternativa_b,
-        alternativa_c,
-        alternativa_d,
-        alternativa_e,
+        alternativa_a || null,
+        alternativa_b || null,
+        alternativa_c || null,
+        alternativa_d || null,
+        alternativa_e || null,
     ];
 
     const result = await pool.query(query, values);
     return result.rows[0];
 };
+
 
 // Listar todas as questões
 exports.listQuestoes = async () => {

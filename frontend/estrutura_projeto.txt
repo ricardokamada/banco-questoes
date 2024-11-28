@@ -1,0 +1,23 @@
+src/
+├── components/   // Componentes reutilizáveis (ex: Header, Footer)
+├── pages/        // Páginas da aplicação (Login, Cadastro de Questões)
+├── services/     // Serviço para requisições HTTP
+├── context/      // Contexto global para autenticação e estado
+├── App.js        // Configuração das rotas
+├── index.js      // Entrada do React
+└── styles/       // Estilos globais (ex: Bootstrap e CSS customizado)
+
+components/
+Adicione aqui itens reutilizáveis, como Navbar, Footer, ou outros componentes de interface comuns.
+
+context/
+Adicione arquivos para gerenciar autenticação (ex: AuthContext.js) ou qualquer outro estado global.
+
+pages/
+Separe páginas principais como LoginPage.js e QuestionsPage.js. Cada página terá sua lógica própria.
+
+services/
+Adicione aqui a configuração de Axios e APIs para centralizar chamadas ao backend (ex: api.js).
+
+styles/
+Armazene estilos globais ou personalizados (ex: global.css).
