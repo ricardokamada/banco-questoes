@@ -1,30 +1,29 @@
 import React, { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { Container, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
+import { AuthContext } from '../context/AuthContext'; // Importa o contexto de autenticação
 
 const AdminPage = () => {
-  const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  if (!user || user.role !== 'admin') {
-    return <h1>Acesso negado. Somente administradores podem acessar esta página.</h1>;
+  if (!user) {
+    // Redireciona para login se o usuário não estiver autenticado
+    return <Navigate to="/login" />;
   }
 
   return (
-    <Container className="mt-5">
-      <h1>Bem-vindo, {user.name}!</h1>
-      <p>Esta é a página de administração.</p>
-      <Button variant="danger" onClick={handleLogout}>
-        Sair
-      </Button>
-    </Container>
+    <div className="d-flex">
+      {/* Menu Lateral */}
+      <Sidebar />
+
+      {/* Conteúdo Dinâmico */}
+      <div className="flex-grow-1 p-4">
+        <Routes>
+        </Routes>
+      </div>
+    </div>
   );
 };
 
 export default AdminPage;
+

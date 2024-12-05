@@ -132,3 +132,16 @@ exports.deleteQuestao = async (questao_id) => {
     const result = await pool.query(query, [questao_id]);
     return result.rowCount;
 };
+
+
+exports.getQuestaoById = async (idQuestao) => {
+    const query = `
+      SELECT * 
+      FROM questoes 
+      WHERE questao_id = $1
+    `;
+    const result = await pool.query(query, [idQuestao]);
+  
+    return result.rows[0]; // Retorna a questão ou undefined
+  };
+  

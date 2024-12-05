@@ -57,12 +57,32 @@ exports.createQuestao = async (req, res) => {
 exports.listQuestoes = async (req, res) => {
     try {
         const result = await questoesModel.listQuestoes();
-        res.status(200).json(result);
+
+        // Formatar as questões para incluir a propriedade 'alternativas'
+        const formattedResult = result.map((questao) => ({
+            id: questao.questao_id,
+            enunciado: questao.questao,
+            ano: questao.ano_prova,
+            alternativa_correta: questao.alternativa_correta,
+            alternativas: [
+                questao.alternativa_a,
+                questao.alternativa_b,
+                questao.alternativa_c,
+                questao.alternativa_d,
+                questao.alternativa_e,
+            ].filter(Boolean), // Remove alternativas nulas ou undefined
+            banca: questao.nome_banca,
+            disciplina: questao.nome_disciplina,
+            cargo: questao.nome_cargo,
+        }));
+
+        res.status(200).json(formattedResult);
     } catch (err) {
         console.error('Erro ao listar questões:', err.message);
         res.status(500).json({ error: 'Erro ao listar questões.' });
     }
 };
+
 
 // Atualizar uma questão
 exports.updateQuestao = async (req, res) => {
@@ -149,3 +169,40 @@ exports.deleteQuestao = async (req, res) => {
         res.status(500).json({ error: 'Erro ao deletar questão.' });
     }
 };
+
+
+// Verificar se a resposta está correta
+exports.verificarResposta = async (req, res) => {
+    const { idQuestao, resposta } = req.body;
+
+    if (!idQuestao || !resposta) {
+        return res.status(400).json({ error: 'Questão e resposta são obrigatórias.' });
+    }
+
+    try {
+        // Buscar a questão pelo ID
+        const questao = await questoesModel.getQuestaoById(idQuestao);
+
+        if (!questao) {
+            return res.status(404).json({ error: 'Questão não encontrada.' });
+        }
+
+        // Obter o texto da alternativa correta com base na letra armazenada
+        const alternativaCorreta = questao[`alternativa_${questao.alternativa_correta.toLowerCase()}`];
+
+        if (!alternativaCorreta) {
+            return res.status(500).json({ error: 'Alternativa correta não encontrada.' });
+        }
+
+        // Comparar a resposta enviada com o texto da alternativa correta
+        const correto = alternativaCorreta.trim().toLowerCase() === resposta.trim().toLowerCase();
+
+        res.status(200).json({ correto });
+    } catch (err) {
+        console.error('Erro ao verificar resposta:', err.message);
+        res.status(500).json({ error: 'Erro interno ao verificar a resposta.' });
+    }
+};
+
+
+
