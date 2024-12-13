@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
-const SidebarHome = ({ disciplinas }) => {
-  const [collapsed, setCollapsed] = useState(false); // Controle de visibilidade
-  const [search, setSearch] = useState(''); // Valor do campo de busca
+const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [search, setSearch] = useState('');
 
-  // Filtrar disciplinas com base na pesquisa
   const filteredDisciplinas = disciplinas.filter((disciplina) =>
     disciplina.toLowerCase().includes(search.toLowerCase())
   );
@@ -19,7 +18,6 @@ const SidebarHome = ({ disciplinas }) => {
       }}
       className="bg-light vh-100 border-end position-relative"
     >
-      {/* Botão para esconder/exibir a barra lateral */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         style={{
@@ -39,7 +37,6 @@ const SidebarHome = ({ disciplinas }) => {
 
       {!collapsed && (
         <div className="p-3">
-          {/* Campo de pesquisa */}
           <Form.Control
             type="text"
             placeholder="Pesquisar disciplina..."
@@ -47,15 +44,22 @@ const SidebarHome = ({ disciplinas }) => {
             onChange={(e) => setSearch(e.target.value)}
             className="mb-3"
           />
-
-          {/* Linha separadora */}
           <hr />
-
-          {/* Lista de disciplinas */}
           <ul className="list-unstyled">
             {filteredDisciplinas.map((disciplina, index) => (
-              <li key={index} className="mb-2">
-                <span>{disciplina}</span>
+              <li
+                key={index}
+                className={`mb-2 ${
+                  disciplina === disciplinaAtiva ? 'bg-primary text-white' : ''
+                }`}
+                style={{
+                  padding: '10px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+                onClick={() => onDisciplinaSelect(disciplina)}
+              >
+                {disciplina}
               </li>
             ))}
           </ul>
