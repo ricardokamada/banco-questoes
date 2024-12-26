@@ -10,8 +10,13 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+          {/* Rota para a página de login */}
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Rota para o painel administrativo e suas rotas internas */}
           <Route path="/admin/*" element={<AdminPage />} />
+
+          {/* Rota para a página inicial */}
           <Route path="/" element={<HomePage />} />
         </Routes>
       </Router>

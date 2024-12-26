@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import SidebarHome from '../components/SidebarHome';
 import api from '../services/api';
 
@@ -10,9 +10,13 @@ const HomePage = () => {
     const fetchDisciplinas = async () => {
       try {
         const response = await api.get('/disciplinas');
-        setDisciplinas(response.data.map((d) => d.nome_disciplina));
+        console.log('Resposta da API:', response.data);
+        if (response.data) {
+          setDisciplinas(response.data.map((d) => d.nome_disciplina));
+        }
       } catch (error) {
         console.error('Erro ao buscar disciplinas:', error);
+        alert('Erro ao carregar disciplinas. Verifique o backend.');
       }
     };
 
@@ -26,14 +30,11 @@ const HomePage = () => {
         onDisciplinaSelect={setDisciplinaAtiva}
         disciplinaAtiva={disciplinaAtiva}
       />
-      <div className="container mt-4 d-flex flex-column align-items-center">
+      <div className="container mt-4">
         {disciplinaAtiva ? (
-          <>
-            <h1 className="mb-4 text-center">Disciplina: {disciplinaAtiva}</h1>
-            <p>Conteúdo dinâmico da disciplina <strong>{disciplinaAtiva}</strong>.</p>
-          </>
+          <h1>Conteúdo da disciplina: {disciplinaAtiva}</h1>
         ) : (
-          <h1 className="text-center">Selecione uma disciplina no menu lateral.</h1>
+          <h1>Selecione uma disciplina no menu lateral.</h1>
         )}
       </div>
     </div>

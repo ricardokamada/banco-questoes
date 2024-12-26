@@ -7,7 +7,7 @@ const app = express();
 
 // Configuração do CORS
 const corsOptions = {
-    origin: 'http://localhost:3001', // Permite o frontend acessar o backend
+    origin: ['http://localhost:3001', 'http://localhost:3000', 'http://localhost:5000' ], // Permite o frontend acessar o backend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Permite envio de cookies, se necessário
 };
