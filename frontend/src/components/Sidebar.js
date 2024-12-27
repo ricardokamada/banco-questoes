@@ -55,8 +55,26 @@ const Sidebar = ({ disciplinas }) => {
                     </ul>
                     <hr />
                     <Link to="/admin/cadastrar">
-                        <Button className="w-100" variant="primary">
-                            Cadastrar
+                        <Button className="w-100 mb-2" variant="primary">
+                            Questões
+                        </Button>
+                    </Link>
+
+                    <Link to="/admin/cadastrar">
+                        <Button className="w-100 mb-2" variant="primary">
+                            Bancas
+                        </Button>
+                    </Link>
+
+                    <Link to="/admin/cadastrar">
+                        <Button className="w-100 mb-2" variant="primary">
+                            Disciplinas
+                        </Button>
+                    </Link>
+
+                    <Link to="/admin/cadastrar">
+                        <Button className="w-100 mb-2" variant="primary">
+                            Cargos
                         </Button>
                     </Link>
                 </div>

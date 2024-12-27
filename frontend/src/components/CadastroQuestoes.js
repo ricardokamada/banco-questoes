@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Modal, Button } from 'react-bootstrap';
 import api from '../services/api'; // Certifique-se de configurar sua instância da API
 
 const CadastroQuestoes = () => {
@@ -19,9 +20,7 @@ const CadastroQuestoes = () => {
     const [bancas, setBancas] = useState([]);
     const [disciplinas, setDisciplinas] = useState([]);
     const [cargos, setCargos] = useState([]);
-    const [searchBanca, setSearchBanca] = useState('');
-    const [searchDisciplina, setSearchDisciplina] = useState('');
-    const [searchCargo, setSearchCargo] = useState('');
+    const [modalInfo, setModalInfo] = useState({ show: false, success: false, message: '' });
 
     useEffect(() => {
         const fetchBancas = async () => {
@@ -64,17 +63,34 @@ const CadastroQuestoes = () => {
         setForm({ ...form, [name]: value });
     };
 
-    const handleSave = () => {
-        console.log('Salvando questão:', form);
+    const handleSave = async () => {
+        const payload = {
+            questao: form.questao.trim(),
+            banca_id: form.banca, // Certifique-se de que o valor seja o ID correto
+            disciplina_id: form.disciplina, // Certifique-se de que o valor seja o ID correto
+            cargo_id: form.cargo, // Certifique-se de que o valor seja o ID correto
+            ano_prova: form.ano,
+            alternativa_correta: 'A', // Atualize conforme a lógica de escolha da alternativa correta
+            alternativa_a: form.alternativaA.trim(),
+            alternativa_b: form.alternativaB.trim(),
+            alternativa_c: form.alternativaC.trim(),
+            alternativa_d: form.alternativaD.trim(),
+            alternativa_e: form.alternativaE.trim(),
+        };
+    
+        try {
+            const response = await api.post('http://localhost:3000/api/questoes/', payload);
+            setModalInfo({ show: true, success: true, message: 'Questão salva com sucesso!' });
+        } catch (error) {
+            console.error('Erro ao salvar questão:', error.response?.data || error.message);
+            setModalInfo({ show: true, success: false, message: 'Erro ao salvar questão. Verifique os dados e tente novamente.' });
+        }
     };
+    
 
-    const handleEdit = () => {
-        console.log('Editando questão:', form);
+    const handleCloseModal = () => {
+        setModalInfo({ show: false, success: false, message: '' });
     };
-
-    const filteredBancas = bancas.filter((banca) => banca.toLowerCase().includes(searchBanca.toLowerCase()));
-    const filteredDisciplinas = disciplinas.filter((disciplina) => disciplina.toLowerCase().includes(searchDisciplina.toLowerCase()));
-    const filteredCargos = cargos.filter((cargo) => cargo.toLowerCase().includes(searchCargo.toLowerCase()));
 
     return (
         <div className="container mt-5">
@@ -106,23 +122,15 @@ const CadastroQuestoes = () => {
                                     id="banca"
                                     name="banca"
                                     placeholder="Pesquisar banca..."
-                                    value={searchBanca}
-                                    onChange={(e) => setSearchBanca(e.target.value)}
+                                    value={form.banca}
+                                    onChange={handleChange}
+                                    list="bancas"
                                 />
-                                <ul className="list-group mt-2">
-                                    {filteredBancas.map((banca, index) => (
-                                        <li
-                                            key={index}
-                                            className="list-group-item list-group-item-action"
-                                            onClick={() => {
-                                                setForm({ ...form, banca });
-                                                setSearchBanca('');
-                                            }}
-                                        >
-                                            {banca}
-                                        </li>
+                                <datalist id="bancas">
+                                    {bancas.map((banca, index) => (
+                                        <option key={index} value={banca} />
                                     ))}
-                                </ul>
+                                </datalist>
                             </div>
                             <div className="col-md-4 mb-3">
                                 <label htmlFor="disciplina" className="form-label">Disciplina</label>
@@ -132,23 +140,15 @@ const CadastroQuestoes = () => {
                                     id="disciplina"
                                     name="disciplina"
                                     placeholder="Pesquisar disciplina..."
-                                    value={searchDisciplina}
-                                    onChange={(e) => setSearchDisciplina(e.target.value)}
+                                    value={form.disciplina}
+                                    onChange={handleChange}
+                                    list="disciplinas"
                                 />
-                                <ul className="list-group mt-2">
-                                    {filteredDisciplinas.map((disciplina, index) => (
-                                        <li
-                                            key={index}
-                                            className="list-group-item list-group-item-action"
-                                            onClick={() => {
-                                                setForm({ ...form, disciplina });
-                                                setSearchDisciplina('');
-                                            }}
-                                        >
-                                            {disciplina}
-                                        </li>
+                                <datalist id="disciplinas">
+                                    {disciplinas.map((disciplina, index) => (
+                                        <option key={index} value={disciplina} />
                                     ))}
-                                </ul>
+                                </datalist>
                             </div>
                             <div className="col-md-4 mb-3">
                                 <label htmlFor="cargo" className="form-label">Cargo</label>
@@ -158,23 +158,15 @@ const CadastroQuestoes = () => {
                                     id="cargo"
                                     name="cargo"
                                     placeholder="Pesquisar cargo..."
-                                    value={searchCargo}
-                                    onChange={(e) => setSearchCargo(e.target.value)}
+                                    value={form.cargo}
+                                    onChange={handleChange}
+                                    list="cargos"
                                 />
-                                <ul className="list-group mt-2">
-                                    {filteredCargos.map((cargo, index) => (
-                                        <li
-                                            key={index}
-                                            className="list-group-item list-group-item-action"
-                                            onClick={() => {
-                                                setForm({ ...form, cargo });
-                                                setSearchCargo('');
-                                            }}
-                                        >
-                                            {cargo}
-                                        </li>
+                                <datalist id="cargos">
+                                    {cargos.map((cargo, index) => (
+                                        <option key={index} value={cargo} />
                                     ))}
-                                </ul>
+                                </datalist>
                             </div>
                         </div>
 
@@ -210,11 +202,22 @@ const CadastroQuestoes = () => {
 
                         <div className="d-flex justify-content-end">
                             <button type="button" className="btn btn-primary me-2" onClick={handleSave}>Salvar</button>
-                            <button type="button" className="btn btn-secondary" onClick={handleEdit}>Editar</button>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <Modal show={modalInfo.show} onHide={handleCloseModal} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>{modalInfo.success ? 'Sucesso' : 'Erro'}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modalInfo.message}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModal}>
+                        Fechar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };

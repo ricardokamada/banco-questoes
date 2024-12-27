@@ -1,26 +1,34 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { AuthContext } from '../context/AuthContext'; // Importa o contexto de autenticação
 import CadastroQuestoes from '../components/CadastroQuestoes';
 
 const AdminPage = () => {
-  const { user } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
+    // Valida o token diretamente
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login'; // Redireciona para login se não houver token
+        }
+    }, []);
 
-  return (
-    <div className="d-flex">
-      <Sidebar />
-      <div className="flex-grow-1 p-4">
-        <Routes>
-          <Route path="cadastrar" element={<CadastroQuestoes />} />
-        </Routes>
-      </div>
-    </div>
-  );
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
+
+    return (
+        <div className="d-flex">
+            <Sidebar />
+            <div className="flex-grow-1 p-4">
+                <Routes>
+                    <Route path="cadastrar" element={<CadastroQuestoes />} />
+                </Routes>
+            </div>
+        </div>
+    );
 };
 
 export default AdminPage;
