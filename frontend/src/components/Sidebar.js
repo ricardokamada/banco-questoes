@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 
-const Sidebar = ({ disciplinas }) => {
+const Sidebar = ({ disciplinas, onQuestaoClick }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [search, setSearch] = useState('');
 
@@ -54,29 +54,17 @@ const Sidebar = ({ disciplinas }) => {
                         ))}
                     </ul>
                     <hr />
-                    <Link to="/admin/cadastrar">
-                        <Button className="w-100 mb-2" variant="primary">
-                            Questões
-                        </Button>
-                    </Link>
+                    <Button
+                        className="w-100 mb-2"
+                        variant="primary"
+                        onClick={onQuestaoClick}
+                    >
+                        Questões
+                    </Button>
 
-                    <Link to="/admin/cadastrar">
-                        <Button className="w-100 mb-2" variant="primary">
-                            Bancas
-                        </Button>
-                    </Link>
-
-                    <Link to="/admin/cadastrar">
-                        <Button className="w-100 mb-2" variant="primary">
-                            Disciplinas
-                        </Button>
-                    </Link>
-
-                    <Link to="/admin/cadastrar">
-                        <Button className="w-100 mb-2" variant="primary">
-                            Cargos
-                        </Button>
-                    </Link>
+                    <Button className="w-100 mb-2" variant="primary">
+                        Usuários
+                    </Button>
                 </div>
             )}
         </div>

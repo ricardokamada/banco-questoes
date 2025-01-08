@@ -145,3 +145,30 @@ exports.getQuestaoById = async (idQuestao) => {
     return result.rows[0]; // Retorna a questão ou undefined
   };
   
+  // Buscar questões pelo texto do enunciado
+exports.getQuestoesByText = async (texto) => {
+    const query = `
+        SELECT 
+            q.questao_id,
+            q.questao,
+            q.ano_prova,
+            q.alternativa_correta,
+            q.alternativa_a,
+            q.alternativa_b,
+            q.alternativa_c,
+            q.alternativa_d,
+            q.alternativa_e,
+            b.nome_banca,
+            d.nome_disciplina,
+            c.nome_cargo
+        FROM questoes q
+        JOIN bancas b ON q.banca_id = b.banca_id
+        JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
+        JOIN cargos c ON q.cargo_id = c.cargo_id
+        WHERE q.questao ILIKE $1;
+    `;
+    const values = [`%${texto}%`]; // Busca parcial e case-insensitive
+
+    const result = await pool.query(query, values);
+    return result.rows; // Retorna uma lista de questões
+};

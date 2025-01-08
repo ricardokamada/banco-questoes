@@ -5,9 +5,11 @@ import api from '../services/api';
 const HomePage = () => {
   const [disciplinas, setDisciplinas] = useState([]);
   const [disciplinaAtiva, setDisciplinaAtiva] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDisciplinas = async () => {
+      setLoading(true); // Inicia o carregamento
       try {
         const response = await api.get('/disciplinas');
         console.log('Resposta da API:', response.data);
@@ -17,6 +19,8 @@ const HomePage = () => {
       } catch (error) {
         console.error('Erro ao buscar disciplinas:', error);
         alert('Erro ao carregar disciplinas. Verifique o backend.');
+      } finally {
+        setLoading(false); // Finaliza o carregamento
       }
     };
 
@@ -31,7 +35,9 @@ const HomePage = () => {
         disciplinaAtiva={disciplinaAtiva}
       />
       <div className="container mt-4">
-        {disciplinaAtiva ? (
+        {loading ? (
+          <h1>Carregando disciplinas...</h1>
+        ) : disciplinaAtiva ? (
           <h1>Conteúdo da disciplina: {disciplinaAtiva}</h1>
         ) : (
           <h1>Selecione uma disciplina no menu lateral.</h1>

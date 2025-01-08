@@ -206,3 +206,44 @@ exports.verificarResposta = async (req, res) => {
 
 
 
+// Buscar questão por ID
+exports.buscaID = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ error: 'ID é obrigatório.' });
+    }
+
+    try {
+        const result = await questoesModel.getQuestaoById(id);
+        if (!result) {
+            return res.status(404).json({ error: 'Questão não encontrada.' });
+        }
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Erro ao buscar questão por ID:', err.message);
+        res.status(500).json({ error: 'Erro ao buscar questão.' });
+    }
+};
+
+// Buscar questões por texto do enunciado
+exports.buscaEnunciado = async (req, res) => {
+    const { texto } = req.query;
+
+    if (!texto) {
+        return res.status(400).json({ error: 'Texto do enunciado é obrigatório.' });
+    }
+
+    try {
+        const result = await questoesModel.getQuestoesByText(texto);
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma questão encontrada.' });
+        }
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Erro ao buscar questões por enunciado:', err.message);
+        res.status(500).json({ error: 'Erro ao buscar questões.' });
+    }
+};
