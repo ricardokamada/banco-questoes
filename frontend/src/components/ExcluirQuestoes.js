@@ -8,28 +8,39 @@ const ExcluirQuestoes = ({ show, onHide }) => {
     const [questoes, setQuestoes] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [alert, setAlert] = useState({ show: false, variant: '', message: '' });
+    
 
     const handleSearch = async () => {
         try {
             let response;
             if (!isNaN(searchTerm)) {
-                // Buscar por ID
+                console.log('Parâmetro enviado para o backend:', searchTerm);
+
                 response = await api.get(`/questoes/${searchTerm}`);
-                setQuestoes([response.data]); // Envolve em um array para exibição uniforme
+                if (response.data) {
+                    setQuestoes([response.data]); // Envolve em array para consistência
+                } else {
+                    setAlert({ show: true, variant: 'warning', message: 'Nenhuma questão encontrada com este ID.' });
+                    setQuestoes([]);
+                }
             } else {
-                // Buscar por texto do enunciado
+                console.log('Parâmetro enviado para o backend:', searchTerm);
+
                 response = await api.get(`/questoes`, { params: { texto: searchTerm } });
-                setQuestoes(response.data);
+                if (response.data && response.data.length > 0) {
+                    setQuestoes(response.data);
+                } else {
+                    setAlert({ show: true, variant: 'warning', message: 'Nenhuma questão encontrada.' });
+                    setQuestoes([]);
+                }
             }
-            setSelectedIds([]); // Limpa seleções anteriores
-            if (response.data.length === 0 || !response.data) {
-                setAlert({ show: true, variant: 'warning', message: 'Nenhuma questão encontrada.' });
-            }
+            setSelectedIds([]);
         } catch (error) {
             console.error('Erro ao buscar questões:', error);
             setAlert({ show: true, variant: 'danger', message: 'Erro ao buscar questões. Verifique o backend.' });
         }
     };
+    
 
     const handleSelect = (id) => {
         setSelectedIds((prevSelected) =>
@@ -44,9 +55,13 @@ const ExcluirQuestoes = ({ show, onHide }) => {
             setAlert({ show: true, variant: 'warning', message: 'Selecione pelo menos uma questão para excluir.' });
             return;
         }
-
+    
         try {
             for (const id of selectedIds) {
+                if (id === undefined || id === null) {
+                    console.error(`ID inválido detectado: ${id}`);
+                    continue; // Pule IDs inválidos
+                }
                 await api.delete(`/questoes/${id}`);
             }
             setAlert({ show: true, variant: 'success', message: 'Questões excluídas com sucesso!' });
@@ -58,6 +73,7 @@ const ExcluirQuestoes = ({ show, onHide }) => {
             setAlert({ show: true, variant: 'danger', message: 'Erro ao excluir questões. Verifique o backend.' });
         }
     };
+    
 
     return (
         <Modal show={show} onHide={onHide} size="lg" centered>
@@ -99,7 +115,7 @@ const ExcluirQuestoes = ({ show, onHide }) => {
                                             onChange={() => handleSelect(questao.id)}
                                         />
                                     </td>
-                                    <td>{questao.questao}</td>
+                                    <td>{questao.enunciado}</td>
                                 </tr>
                             ))}
                         </tbody>

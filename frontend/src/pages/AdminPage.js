@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/SidebarAdmin';
 import { AuthContext } from '../context/AuthContext';
 import CadastroQuestoes from '../components/CadastroQuestoes';
 import ExcluirQuestoes from '../components/ExcluirQuestoes'; // Importar o novo componente

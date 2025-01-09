@@ -220,16 +220,31 @@ exports.buscaID = async (req, res) => {
             return res.status(404).json({ error: 'Questão não encontrada.' });
         }
 
-        res.status(200).json(result);
+        res.status(200).json({
+            id: result.questao_id,
+            questao: result.questao,
+            ano: result.ano_prova,
+            alternativas: [
+                result.alternativa_a,
+                result.alternativa_b,
+                result.alternativa_c,
+                result.alternativa_d,
+                result.alternativa_e,
+            ].filter(Boolean),
+        });
     } catch (err) {
         console.error('Erro ao buscar questão por ID:', err.message);
         res.status(500).json({ error: 'Erro ao buscar questão.' });
     }
 };
 
+
 // Buscar questões por texto do enunciado
 exports.buscaEnunciado = async (req, res) => {
     const { texto } = req.query;
+
+    console.log('chegando no backend:', req.query.texto);
+
 
     if (!texto) {
         return res.status(400).json({ error: 'Texto do enunciado é obrigatório.' });
@@ -241,7 +256,23 @@ exports.buscaEnunciado = async (req, res) => {
             return res.status(404).json({ error: 'Nenhuma questão encontrada.' });
         }
 
-        res.status(200).json(result);
+        const formattedResults = result.map((questao) => ({
+            id: questao.questao_id,
+            questao: questao.questao,
+            ano: questao.ano_prova,
+            alternativas: [
+                questao.alternativa_a,
+                questao.alternativa_b,
+                questao.alternativa_c,
+                questao.alternativa_d,
+                questao.alternativa_e,
+            ].filter(Boolean),
+        }));
+
+        console.log('Dados retornados pelo modelo:', result);
+
+
+        res.status(200).json(formattedResults);
     } catch (err) {
         console.error('Erro ao buscar questões por enunciado:', err.message);
         res.status(500).json({ error: 'Erro ao buscar questões.' });
