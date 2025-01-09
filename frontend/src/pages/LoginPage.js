@@ -1,22 +1,22 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
-import { AuthContext } from '../context/AuthContext'; // Importa o contexto de autenticação
+import { AuthContext } from '../context/AuthContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useContext(AuthContext); // Obtém a função login do contexto
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(''); // Limpa mensagens de erro anteriores
+    setError('');
 
     try {
-      await login(email, password); // Chama a função login do contexto
-      navigate('/admin'); // Redireciona para a página de administração
+      await login(email, password);
+      navigate('/admin');
     } catch (err) {
       console.error('Erro no login:', err.response?.data?.error || err.message);
       setError(err.response?.data?.error || 'Erro ao realizar login.');
