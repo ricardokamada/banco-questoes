@@ -34,3 +34,19 @@ exports.deleteDisciplina = async (id) => {
     );
     return result.rowCount; // Retorna o número de linhas deletadas
 };
+
+
+// Buscar disciplina por ID
+exports.getDisciplinaById = async (id) => {
+    const result = await pool.query(`SELECT * FROM disciplinas WHERE disciplina_id = $1`, [id]);
+    return result.rows[0];
+};
+
+// Buscar disciplinas pelo nome
+exports.getDisciplinasByName = async (nome) => {
+    const result = await pool.query(
+        `SELECT * FROM disciplinas WHERE nome_disciplina ILIKE $1`,
+        [`%${nome}%`]
+    );
+    return result.rows;
+};

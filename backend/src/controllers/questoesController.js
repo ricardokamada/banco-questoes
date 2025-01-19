@@ -86,52 +86,53 @@ exports.listQuestoes = async (req, res) => {
 
 // Atualizar uma questão
 exports.updateQuestao = async (req, res) => {
-    const { id } = req.params;
     const {
         questao,
         banca_id,
         disciplina_id,
         cargo_id,
         ano_prova,
-        alternativa_correta,
         alternativa_a,
         alternativa_b,
         alternativa_c,
         alternativa_d,
         alternativa_e,
+        alternativa_correta,
     } = req.body;
 
+    // Log para verificar os dados recebidos
+    console.log("Dados recebidos no controller:", req.body);
+
+    // Verificação de campos obrigatórios
     if (
-        !id ||
         !questao ||
         !banca_id ||
         !disciplina_id ||
         !cargo_id ||
         !ano_prova ||
-        !alternativa_correta ||
         !alternativa_a ||
         !alternativa_b ||
         !alternativa_c ||
         !alternativa_d ||
-        !alternativa_e
+        !alternativa_correta
     ) {
-        return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+        return res.status(400).json({ error: 'Todos os campos obrigatórios devem ser preenchidos.' });
     }
 
     try {
         const result = await questoesModel.updateQuestao({
-            questao_id: id,
+            questao_id: req.params.id,
             questao,
             banca_id,
             disciplina_id,
             cargo_id,
-            ano_prova,
-            alternativa_correta,
+            ano_prova: parseInt(ano_prova, 10), // Garantir que ano_prova seja um número
             alternativa_a,
             alternativa_b,
             alternativa_c,
             alternativa_d,
             alternativa_e,
+            alternativa_correta,
         });
 
         if (!result) {
@@ -147,6 +148,8 @@ exports.updateQuestao = async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar questão.' });
     }
 };
+
+
 
 // Deletar uma questão
 exports.deleteQuestao = async (req, res) => {
@@ -215,28 +218,21 @@ exports.buscaID = async (req, res) => {
     }
 
     try {
-        const result = await questoesModel.getQuestaoById(id);
-        if (!result) {
+        const questao = await questoesModel.getQuestaoById(id);
+
+        if (!questao) {
             return res.status(404).json({ error: 'Questão não encontrada.' });
         }
 
-        res.status(200).json({
-            id: result.questao_id,
-            questao: result.questao,
-            ano: result.ano_prova,
-            alternativas: [
-                result.alternativa_a,
-                result.alternativa_b,
-                result.alternativa_c,
-                result.alternativa_d,
-                result.alternativa_e,
-            ].filter(Boolean),
-        });
+        res.status(200).json(questao);
     } catch (err) {
         console.error('Erro ao buscar questão por ID:', err.message);
         res.status(500).json({ error: 'Erro ao buscar questão.' });
     }
 };
+
+
+
 
 
 // Buscar questões por texto do enunciado

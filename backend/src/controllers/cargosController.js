@@ -79,3 +79,48 @@ exports.deleteCargo = async (req, res) => {
         res.status(500).json({ error: 'Erro ao deletar cargo.' });
     }
 };
+
+
+// Buscar cargo por ID
+exports.getCargoById = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ error: 'ID do cargo é obrigatório.' });
+    }
+
+    try {
+        const result = await cargosModel.getCargoById(id);
+
+        if (!result) {
+            return res.status(404).json({ error: 'Cargo não encontrado.' });
+        }
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Erro ao buscar o cargo por ID:', err.message);
+        res.status(500).json({ error: 'Erro ao buscar cargo.' });
+    }
+};
+
+// Buscar cargos pelo nome
+exports.getCargosByName = async (req, res) => {
+    const { nome } = req.query;
+
+    if (!nome) {
+        return res.status(400).json({ error: 'Nome do cargo é obrigatório.' });
+    }
+
+    try {
+        const result = await cargosModel.getCargosByName(nome);
+
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Nenhum cargo encontrado com este nome.' });
+        }
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Erro ao buscar cargos pelo nome:', err.message);
+        res.status(500).json({ error: 'Erro ao buscar cargos.' });
+    }
+};

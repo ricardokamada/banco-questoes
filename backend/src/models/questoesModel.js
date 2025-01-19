@@ -136,14 +136,29 @@ exports.deleteQuestao = async (questao_id) => {
 
 exports.getQuestaoById = async (idQuestao) => {
     const query = `
-      SELECT * 
-      FROM questoes 
-      WHERE questao_id = $1
+        SELECT 
+            q.questao_id,
+            q.questao AS enunciado,
+            q.ano_prova AS ano,
+            q.alternativa_a,
+            q.alternativa_b,
+            q.alternativa_c,
+            q.alternativa_d,
+            q.alternativa_e,
+            q.alternativa_correta,
+            b.nome_banca AS banca,
+            d.nome_disciplina AS disciplina,
+            c.nome_cargo AS cargo
+        FROM questoes q
+        JOIN bancas b ON q.banca_id = b.banca_id
+        JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
+        JOIN cargos c ON q.cargo_id = c.cargo_id
+        WHERE q.questao_id = $1;
     `;
     const result = await pool.query(query, [idQuestao]);
-  
-    return result.rows[0]; // Retorna a questão ou undefined
-  };
+    return result.rows[0]; // Retorna a questão completa
+};
+
   
   // Buscar questões pelo texto do enunciado
 exports.getQuestoesByText = async (texto) => {

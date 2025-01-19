@@ -29,3 +29,19 @@ exports.deleteCargo = async (id) => {
   const result = await pool.query(`DELETE FROM cargos WHERE cargo_id = $1`, [id]);
   return result.rowCount;
 };
+
+// Buscar cargo por ID
+exports.getCargoById = async (id) => {
+    const result = await pool.query(`SELECT * FROM cargos WHERE cargo_id = $1`, [id]);
+    return result.rows[0]; // Retorna o cargo ou undefined
+  };
+  
+  // Buscar cargos pelo nome
+  exports.getCargosByName = async (nome) => {
+    const result = await pool.query(
+      `SELECT * FROM cargos WHERE nome_cargo ILIKE $1`,
+      [`%${nome}%`] // Busca parcial e case-insensitive
+    );
+    return result.rows; // Retorna uma lista de cargos
+  };
+  

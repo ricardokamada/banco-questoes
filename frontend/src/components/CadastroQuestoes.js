@@ -68,7 +68,7 @@ const CadastroQuestoes = ({ show, onHide }) => {
         const banca = bancas.find((b) => b.nome_banca === form.banca);
         const disciplina = disciplinas.find((d) => d.nome_disciplina === form.disciplina);
         const cargo = cargos.find((c) => c.nome_cargo === form.cargo);
-
+    
         const missingFields = [];
         if (!banca) missingFields.push('banca_id');
         if (!disciplina) missingFields.push('disciplina_id');
@@ -79,12 +79,12 @@ const CadastroQuestoes = ({ show, onHide }) => {
         if (!form.alternativaB.trim()) missingFields.push('alternativa_b');
         if (!form.alternativaC.trim()) missingFields.push('alternativa_c');
         if (!form.alternativaD.trim()) missingFields.push('alternativa_d');
-
+    
         if (missingFields.length > 0) {
             setAlert({ show: true, variant: 'danger', message: `Erro: Campos obrigatórios ausentes - ${missingFields.join(', ')}` });
             return;
         }
-
+    
         const payload = {
             questao: form.questao.trim(),
             banca_id: banca?.banca_id,
@@ -98,22 +98,34 @@ const CadastroQuestoes = ({ show, onHide }) => {
             alternativa_d: form.alternativaD.trim(),
             alternativa_e: form.alternativaE.trim()
         };
-
+    
         try {
-            const response = await api.post('http://localhost:3000/api/questoes/', payload);
+            await api.post('http://localhost:3000/api/questoes/', payload);
             setAlert({ show: true, variant: 'success', message: 'Questão salva com sucesso!' });
-            setTimeout(() => {
-                setAlert({ show: false, variant: '', message: '' });
-                onHide();
-            }, 2000);
+    
+            // Limpar o formulário
+            setForm({
+                questao: '',
+                banca: '',
+                disciplina: '',
+                cargo: '',
+                ano: '',
+                alternativaA: '',
+                alternativaB: '',
+                alternativaC: '',
+                alternativaD: '',
+                alternativaE: '',
+                alternativaCorreta: 'A'
+            });
         } catch (error) {
             console.error('Erro ao salvar questão:', error.response?.data || error.message);
             setAlert({ show: true, variant: 'danger', message: 'Erro ao salvar questão. Verifique os dados e tente novamente.' });
         }
     };
+    
 
     return (
-        <Modal show={show} onHide={onHide} size="xl" centered>
+        <Modal show={show} onHide={onHide} backdrop="static" size="xl" centered>
             <Modal.Header closeButton>
                 <Modal.Title>Cadastro de Questões</Modal.Title>
             </Modal.Header>
@@ -214,6 +226,25 @@ const CadastroQuestoes = ({ show, onHide }) => {
                             />
                         </div>
                     ))}
+
+                    <div className="mb-3">
+                        <label htmlFor="alternativaCorreta" className="form-label">Alternativa Correta</label>
+                        <select
+                            className="form-control"
+                            id="alternativaCorreta"
+                            name="alternativaCorreta"
+                            value={form.alternativaCorreta}
+                            onChange={handleChange}
+                        >
+                            {['A', 'B', 'C', 'D', 'E'].map((letra) => (
+                                <option key={letra} value={letra}>
+                                    {letra}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+
                 </form>
             </Modal.Body>
             <Modal.Footer>
