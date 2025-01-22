@@ -134,6 +134,8 @@ exports.deleteQuestao = async (questao_id) => {
 };
 
 
+
+
 exports.getQuestaoById = async (idQuestao) => {
     const query = `
         SELECT 
@@ -150,22 +152,34 @@ exports.getQuestaoById = async (idQuestao) => {
             d.nome_disciplina AS disciplina,
             c.nome_cargo AS cargo
         FROM questoes q
-        JOIN bancas b ON q.banca_id = b.banca_id
-        JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
-        JOIN cargos c ON q.cargo_id = c.cargo_id
+        LEFT JOIN bancas b ON q.banca_id = b.banca_id
+        LEFT JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
+        LEFT JOIN cargos c ON q.cargo_id = c.cargo_id
         WHERE q.questao_id = $1;
     `;
-    const result = await pool.query(query, [idQuestao]);
-    return result.rows[0]; // Retorna a questão completa
+
+    try {
+        const result = await pool.query(query, [idQuestao]);
+        
+        if (result.rows.length === 0) {
+            throw new Error("Questão não encontrada.");
+        }
+
+        return result.rows[0]; // Retorna a questão completa
+    } catch (error) {
+        console.error("Erro ao buscar questão:", error.message);
+        throw new Error("Erro ao buscar a questão. Tente novamente mais tarde.");
+    }
 };
+
 
   
   // Buscar questões pelo texto do enunciado
-exports.getQuestoesByText = async (texto) => {
+  exports.getQuestoesByText = async (texto) => {
     const query = `
         SELECT 
             q.questao_id,
-            q.questao,
+            q.questao AS enunciado,
             q.ano_prova,
             q.alternativa_correta,
             q.alternativa_a,
@@ -177,13 +191,17 @@ exports.getQuestoesByText = async (texto) => {
             d.nome_disciplina,
             c.nome_cargo
         FROM questoes q
-        JOIN bancas b ON q.banca_id = b.banca_id
-        JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
-        JOIN cargos c ON q.cargo_id = c.cargo_id
+        LEFT JOIN bancas b ON q.banca_id = b.banca_id
+        LEFT JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
+        LEFT JOIN cargos c ON q.cargo_id = c.cargo_id
         WHERE q.questao ILIKE $1;
     `;
-    const values = [`%${texto}%`]; // Busca parcial e case-insensitive
-
-    const result = await pool.query(query, values);
-    return result.rows; // Retorna uma lista de questões
+    const values = [`%${texto.trim()}%`]; // Remove espaços extras antes e depois
+    try {
+        const result = await pool.query(query, values);
+        return result.rows;
+    } catch (error) {
+        console.error("Erro ao buscar questões pelo texto:", error.message);
+        throw new Error("Erro ao buscar questões. Verifique o backend.");
+    }
 };

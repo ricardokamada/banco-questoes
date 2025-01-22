@@ -254,7 +254,7 @@ exports.buscaEnunciado = async (req, res) => {
 
         const formattedResults = result.map((questao) => ({
             id: questao.questao_id,
-            questao: questao.questao,
+            questao: questao.enunciado, // Ajuste para usar enunciado
             ano: questao.ano_prova,
             alternativas: [
                 questao.alternativa_a,
@@ -264,6 +264,7 @@ exports.buscaEnunciado = async (req, res) => {
                 questao.alternativa_e,
             ].filter(Boolean),
         }));
+        
 
         console.log('Dados retornados pelo modelo:', result);
 

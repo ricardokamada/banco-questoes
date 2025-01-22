@@ -19,13 +19,16 @@ const ExcluirQuestoes = ({ show, onHide }) => {
                 response = await api.get(`/questoes/${searchId}`);
                 if (response.data) {
                     setQuestoes([response.data]); // Envolve em array para consistência
+                    console.log('Questão carregada por ID:', response.data);
                     setAlert({ show: false }); // Remove qualquer alerta
                 }
             } else if (searchEnunciado) {
-                // Busca por enunciado
-                response = await api.get(`/questoes`, { params: { texto: searchEnunciado } });
+                // Busca por enunciado                
+                response = await api.get(`/questoes/search`, { params: { texto: searchEnunciado.trim() } });
+
                 if (response.data && response.data.length > 0) {
                     setQuestoes(response.data);
+                    console.log('Questões carregadas por enunciado:', response.data);
                     setAlert({ show: false }); // Remove qualquer alerta
                 } else {
                     setAlert({ show: true, variant: 'warning', message: 'Nenhuma questão encontrada com este enunciado.' });
@@ -130,7 +133,7 @@ const ExcluirQuestoes = ({ show, onHide }) => {
                                             onChange={() => handleSelect(questao.id)}
                                         />
                                     </td>
-                                    <td>{questao.enunciado}</td>
+                                    <td>{questao.questao || questao.enunciado}</td> {/* Verifica ambas as propriedades */}
                                 </tr>
                             ))}
                         </tbody>
