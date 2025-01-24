@@ -10,6 +10,7 @@ import CadastroCargos from '../components/CadastroCargos';
 import CadastroDisciplinas from '../components/CadastroDisciplinas';
 import ExcluirDisciplinas from '../components/ExcluirDisciplinas';
 import EditarQuestoes from '../components/EditarQuestoes';
+import PesquisarQuestoes from '../components/PesquisarQuestoes';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 const AdminPage = () => {
@@ -24,6 +25,8 @@ const AdminPage = () => {
     const [showEditarQuestoesModal, setShowEditarQuestoesModal] = useState(false); // Modal único
     const [editQuestaoId, setEditQuestaoId] = useState(''); // Armazena o ID da questão para edição
     const [alert, setAlert] = useState({ show: false, variant: '', message: '' });
+    const [showPesquisarQuestoesModal, setShowPesquisarQuestoesModal] = useState(false);
+
 
     if (loading) {
         return <div>Carregando...</div>;
@@ -45,7 +48,7 @@ const AdminPage = () => {
         <div className="d-flex">
             <Sidebar />
             <div className="flex-grow-1 p-4">
-                <h1 className="text-center mb-4">Gerenciamento de Itens</h1>
+                <h1 className="text-center mb-4">Dashboard</h1>
                 <div className="grid-container">
                     {/* Quadrante 1 - Cadastrar */}
                     <div className="quadrant">
@@ -91,7 +94,13 @@ const AdminPage = () => {
                     {/* Quadrante 4 - Pesquisar */}
                     <div className="quadrant">
                         <h2>Pesquisar</h2>
-                        <button className="btn btn-info mb-2">Pesquisar Questão</button>
+                        <button
+                            className="btn btn-info mb-2"
+                            onClick={() => setShowPesquisarQuestoesModal(true)}
+                        >
+                            Pesquisar Questão
+                        </button>
+
                         <button className="btn btn-info mb-2">Pesquisar Cargos</button>
                         <button className="btn btn-info">Pesquisar Disciplinas</button>
                     </div>
@@ -134,6 +143,14 @@ const AdminPage = () => {
                     onFetchQuestao={handleFetchQuestao}
                 />
             )}
+
+            {showPesquisarQuestoesModal && (
+                <PesquisarQuestoes
+                    show={showPesquisarQuestoesModal}
+                    onHide={() => setShowPesquisarQuestoesModal(false)}
+                />
+            )}
+
         </div>
     );
 };

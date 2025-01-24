@@ -11,6 +11,8 @@ router.get('/', questoesController.listQuestoes); // Listar todas as questões
 router.put('/:id', questoesController.updateQuestao);
 router.delete('/:id', questoesController.deleteQuestao);
 router.post('/verificar', questoesController.verificarResposta);
+router.get('/disciplina/:disciplinaId', questoesController.getQuestoesByDisciplina);
+
 
 module.exports = router;
 

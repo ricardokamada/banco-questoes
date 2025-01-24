@@ -205,3 +205,34 @@ exports.getQuestaoById = async (idQuestao) => {
         throw new Error("Erro ao buscar questões. Verifique o backend.");
     }
 };
+
+
+exports.getQuestoesByDisciplina = async (disciplinaId) => {
+    const query = `
+        SELECT 
+            q.questao_id,
+            q.questao,
+            q.ano_prova,
+            q.alternativa_correta,
+            q.alternativa_a,
+            q.alternativa_b,
+            q.alternativa_c,
+            q.alternativa_d,
+            q.alternativa_e,
+            b.nome_banca,
+            d.nome_disciplina,
+            c.nome_cargo
+        FROM questoes q
+        JOIN bancas b ON q.banca_id = b.banca_id
+        JOIN disciplinas d ON q.disciplina_id = d.disciplina_id
+        JOIN cargos c ON q.cargo_id = c.cargo_id
+        WHERE q.disciplina_id = $1;
+    `;
+    try {
+        const result = await pool.query(query, [disciplinaId]);
+        return result.rows;
+    } catch (err) {
+        console.error('Erro ao buscar questões por disciplina:', err.message);
+        throw new Error('Erro ao buscar questões por disciplina.');
+    }
+};

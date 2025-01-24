@@ -275,3 +275,42 @@ exports.buscaEnunciado = async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar questões.' });
     }
 };
+
+exports.getQuestoesByDisciplina = async (req, res) => {
+    const { disciplinaId } = req.params;
+
+    if (!disciplinaId) {
+        return res.status(400).json({ error: 'O ID da disciplina é obrigatório.' });
+    }
+
+    try {
+        const result = await questoesModel.getQuestoesByDisciplina(disciplinaId);
+        if (result.length === 0) {
+            return res.status(404).json({ error: 'Nenhuma questão encontrada para esta disciplina.' });
+        }
+
+        // Formatar os dados para o frontend
+        const formattedResult = result.map((questao) => ({
+            id: questao.questao_id,
+            questao: questao.questao,
+            ano: questao.ano_prova,
+            banca: questao.nome_banca,
+            disciplina: questao.nome_disciplina,
+            cargo: questao.nome_cargo,
+            alternativa_a: questao.alternativa_a,
+            alternativa_b: questao.alternativa_b,
+            alternativa_c: questao.alternativa_c,
+            alternativa_d: questao.alternativa_d,
+            alternativa_e: questao.alternativa_e,
+        }));
+
+        res.status(200).json({
+            questoes: formattedResult,
+            currentPage: 1, // Placeholder para paginação
+            totalPages: 1,  // Placeholder para paginação
+        });
+    } catch (err) {
+        console.error('Erro ao buscar questões por disciplina:', err.message);
+        res.status(500).json({ error: 'Erro ao buscar questões por disciplina.' });
+    }
+};
