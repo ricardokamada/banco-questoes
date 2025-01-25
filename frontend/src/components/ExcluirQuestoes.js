@@ -34,6 +34,7 @@ const ExcluirQuestoes = ({ show, onHide }) => {
                     setAlert({ show: true, variant: 'warning', message: 'Nenhuma questão encontrada com este enunciado.' });
                     setQuestoes([]);
                 }
+                console.log('Dados retornados da API:', response.data);
             } else {
                 setAlert({ show: true, variant: 'danger', message: 'Preencha pelo menos um campo de busca.' });
             }
@@ -76,7 +77,7 @@ const ExcluirQuestoes = ({ show, onHide }) => {
                 await api.delete(`/questoes/${id}`);
             }
             setAlert({ show: true, variant: 'success', message: 'Questões excluídas com sucesso!' });
-            setQuestoes((prevQuestoes) => prevQuestoes.filter((q) => !selectedIds.includes(q.id)));
+            setQuestoes((prevQuestoes) => prevQuestoes.filter((q) => !selectedIds.includes(q.questao_id)));
             setSelectedIds([]);
         } catch (error) {
             console.error('Erro ao excluir questão:', error);
@@ -125,12 +126,12 @@ const ExcluirQuestoes = ({ show, onHide }) => {
                         </thead>
                         <tbody>
                             {questoes.map((questao) => (
-                                <tr key={questao.id}>
+                                <tr key={questao.questao_id}> {/* Alterado para questao.questao_id */}
                                     <td>
                                         <input
                                             type="checkbox"
-                                            checked={selectedIds.includes(questao.id)}
-                                            onChange={() => handleSelect(questao.id)}
+                                            checked={selectedIds.includes(questao.questao_id)}
+                                            onChange={() => handleSelect(questao.questao_id)}
                                         />
                                     </td>
                                     <td>{questao.questao || questao.enunciado}</td> {/* Verifica ambas as propriedades */}

@@ -224,7 +224,19 @@ exports.buscaID = async (req, res) => {
             return res.status(404).json({ error: 'Questão não encontrada.' });
         }
 
-        res.status(200).json(questao);
+        res.status(200).json({
+            questao_id: questao.questao_id, // Garante consistência
+            enunciado: questao.enunciado,
+            ano: questao.ano,
+            alternativas: [
+                questao.alternativa_a,
+                questao.alternativa_b,
+                questao.alternativa_c,
+                questao.alternativa_d,
+                questao.alternativa_e,
+            ].filter(Boolean),
+        });
+        
     } catch (err) {
         console.error('Erro ao buscar questão por ID:', err.message);
         res.status(500).json({ error: 'Erro ao buscar questão.' });
@@ -253,8 +265,8 @@ exports.buscaEnunciado = async (req, res) => {
         }
 
         const formattedResults = result.map((questao) => ({
-            id: questao.questao_id,
-            questao: questao.enunciado, // Ajuste para usar enunciado
+            questao_id: questao.questao_id, // Padronizado como questao_id
+            enunciado: questao.enunciado,
             ano: questao.ano_prova,
             alternativas: [
                 questao.alternativa_a,
@@ -264,6 +276,7 @@ exports.buscaEnunciado = async (req, res) => {
                 questao.alternativa_e,
             ].filter(Boolean),
         }));
+        
         
 
         console.log('Dados retornados pelo modelo:', result);
