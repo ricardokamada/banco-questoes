@@ -5,9 +5,13 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [search, setSearch] = useState('');
 
-  const filteredDisciplinas = disciplinas.filter((disciplina) =>
-    disciplina.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredDisciplinas = search
+    ? disciplinas.filter((disciplina) =>
+        disciplina.nome_disciplina?.toLowerCase().includes(search.toLowerCase())
+      )
+    : disciplinas;
+
+  console.log('Disciplinas após o filtro:', filteredDisciplinas);
 
   return (
     <div
@@ -36,32 +40,38 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
       </button>
 
       {!collapsed && (
-        <div className="p-3">
+        <div className="p-3" style={{ height: 'calc(100vh - 20px)', overflowY: 'auto' }}>
           <Form.Control
             type="text"
             placeholder="Pesquisar disciplina..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              console.log('Texto de busca:', e.target.value);
+              setSearch(e.target.value);
+            }}
             className="mb-3"
           />
           <hr />
           <ul className="list-unstyled">
-            {filteredDisciplinas.map((disciplina, index) => (
-              <li
-                key={index}
-                className={`mb-2 ${
-                  disciplina === disciplinaAtiva ? 'bg-primary text-white' : ''
-                }`}
-                style={{
-                  padding: '10px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-                onClick={() => onDisciplinaSelect(disciplina)}
-              >
-                {disciplina}
-              </li>
-            ))}
+            {filteredDisciplinas.map((disciplina) => {
+              console.log('Renderizando disciplina:', disciplina.nome_disciplina);
+              return (
+                <li
+                  key={disciplina.disciplina_id}
+                  className={`mb-2 ${
+                    disciplina === disciplinaAtiva ? 'bg-primary text-white' : ''
+                  }`}
+                  style={{
+                    padding: '10px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => onDisciplinaSelect(disciplina)}
+                >
+                  {disciplina.nome_disciplina}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

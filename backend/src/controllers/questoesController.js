@@ -174,38 +174,7 @@ exports.deleteQuestao = async (req, res) => {
 };
 
 
-// Verificar se a resposta está correta
-exports.verificarResposta = async (req, res) => {
-    const { idQuestao, resposta } = req.body;
 
-    if (!idQuestao || !resposta) {
-        return res.status(400).json({ error: 'Questão e resposta são obrigatórias.' });
-    }
-
-    try {
-        // Buscar a questão pelo ID
-        const questao = await questoesModel.getQuestaoById(idQuestao);
-
-        if (!questao) {
-            return res.status(404).json({ error: 'Questão não encontrada.' });
-        }
-
-        // Obter o texto da alternativa correta com base na letra armazenada
-        const alternativaCorreta = questao[`alternativa_${questao.alternativa_correta.toLowerCase()}`];
-
-        if (!alternativaCorreta) {
-            return res.status(500).json({ error: 'Alternativa correta não encontrada.' });
-        }
-
-        // Comparar a resposta enviada com o texto da alternativa correta
-        const correto = alternativaCorreta.trim().toLowerCase() === resposta.trim().toLowerCase();
-
-        res.status(200).json({ correto });
-    } catch (err) {
-        console.error('Erro ao verificar resposta:', err.message);
-        res.status(500).json({ error: 'Erro interno ao verificar a resposta.' });
-    }
-};
 
 
 
@@ -289,9 +258,48 @@ exports.buscaEnunciado = async (req, res) => {
     }
 };
 
+// exports.getQuestoesByDisciplina = async (req, res) => {
+//     const { disciplinaId } = req.params;
+//     console.log('Recebido disciplinaId:', disciplinaId); // Verifica o valor recebido
+//     if (!disciplinaId) {
+//         return res.status(400).json({ error: 'O ID da disciplina é obrigatório.' });
+//     }
+
+//     try {
+//         const result = await questoesModel.getQuestoesByDisciplina(disciplinaId);
+//         if (result.length === 0) {
+//             return res.status(404).json({ error: 'Nenhuma questão encontrada para esta disciplina.' });
+//         }
+
+//         // Formatar os dados para o frontend
+//         const formattedResult = result.map((questao) => ({
+//             id: questao.questao_id,
+//             questao: questao.questao,
+//             ano: questao.ano_prova,
+//             banca: questao.nome_banca,
+//             disciplina: questao.nome_disciplina,
+//             cargo: questao.nome_cargo,
+//             alternativa_a: questao.alternativa_a,
+//             alternativa_b: questao.alternativa_b,
+//             alternativa_c: questao.alternativa_c,
+//             alternativa_d: questao.alternativa_d,
+//             alternativa_e: questao.alternativa_e,
+//         }));
+
+//         res.status(200).json({
+//             questoes: formattedResult,
+//             currentPage: 1, // Placeholder para paginação
+//             totalPages: 1,  // Placeholder para paginação
+//         });
+//     } catch (err) {
+//         console.error('Erro ao buscar questões por disciplina:', err.message);
+//         res.status(500).json({ error: 'Erro ao buscar questões por disciplina.' });
+//     }
+// };
+
 exports.getQuestoesByDisciplina = async (req, res) => {
     const { disciplinaId } = req.params;
-
+    console.log('Recebido disciplinaId:', disciplinaId); // Verifica o valor recebido
     if (!disciplinaId) {
         return res.status(400).json({ error: 'O ID da disciplina é obrigatório.' });
     }
@@ -325,5 +333,35 @@ exports.getQuestoesByDisciplina = async (req, res) => {
     } catch (err) {
         console.error('Erro ao buscar questões por disciplina:', err.message);
         res.status(500).json({ error: 'Erro ao buscar questões por disciplina.' });
+    }
+};
+
+
+// Verificar se a resposta está correta
+exports.verificarResposta = async (req, res) => {
+    const { questaoId, alternativaSelecionada } = req.body;
+
+    if (!questaoId || !alternativaSelecionada) {
+        return res.status(400).json({ error: 'O ID da questão e a alternativa selecionada são obrigatórios.' });
+    }
+
+    try {
+        const resultado = await questoesModel.getAlternativaCorreta(questaoId);
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'Questão não encontrada.' });
+        }
+
+        const correta = resultado.alternativa_correta; // A alternativa correta da questão
+        const corretaFormatada = correta.toLowerCase(); // Formato consistente para comparação
+
+        if (corretaFormatada === alternativaSelecionada.toLowerCase()) {
+            return res.status(200).json({ correta: true, mensagem: 'Parabéns! Resposta correta.' });
+        } else {
+            return res.status(200).json({ correta: false, mensagem: 'Resposta incorreta. Tente novamente!' });
+        }
+    } catch (err) {
+        console.error('Erro ao verificar a resposta:', err.message);
+        res.status(500).json({ error: 'Erro ao verificar a resposta.' });
     }
 };

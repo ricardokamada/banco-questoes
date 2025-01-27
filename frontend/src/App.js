@@ -10,6 +10,9 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
+                    {/* Rota para a página inicial */}
+                    <Route path="/" element={<HomePage />} />
+                    
                     {/* Rota para a página de login */}
                     <Route path="/login" element={<LoginPage />} />
 
@@ -19,8 +22,7 @@ const App = () => {
                     {/* Rota para o formulário de cadastro */}
                     <Route path="/cadastro" element={<UserRegistrationForm />} />
 
-                    {/* Rota para a página inicial */}
-                    <Route path="/" element={<HomePage />} />
+
                 </Routes>
             </Router>
         </AuthProvider>

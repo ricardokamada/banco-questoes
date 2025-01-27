@@ -1,37 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarHome from '../components/SidebarHome';
+import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 
 const HomePage = () => {
-    const disciplinas = [
-        'Banco de dados',
-        'SQL',
-        'PL/SQL',
-        'ORACLE APEX',
-        'TESTE DE SOFTWARE',
-        'PYTHON',
-        'JAVASCRIPT',
-        'C++',
-        'C',
-        'C#',
-        'PHP',
-        'ITIL',
-        'COBIT',
-        'KAMBAN',
-        'LINUX',
-        'WINDOWS',
-    ];
-
+    const { loading } = useContext(AuthContext);
+    const [disciplinas, setDisciplinas] = useState([]); // Armazena as disciplinas do backend
+    const [alternativaSelecionada, setAlternativaSelecionada] = useState(null);
     const [disciplinaAtiva, setDisciplinaAtiva] = useState(null);
+    const [questoes, setQuestoes] = useState([]);
     const navigate = useNavigate();
+
+    // Busca as disciplinas do backend ao carregar a página
+    useEffect(() => {
+        const fetchDisciplinas = async () => {
+            try {
+                const response = await api.get('/disciplinas');
+                console.log('Disciplinas retornadas do backend:', response.data); // Verificar os dados recebidos
+                setDisciplinas(response.data); // Atualiza o estado
+            } catch (error) {
+                console.error('Erro ao buscar disciplinas:', error);
+            }
+        };
+        fetchDisciplinas();
+    }, []);
+
+
+    // Busca questões para a disciplina selecionada
+    const fetchQuestoes = async (disciplinaId) => {
+        try {
+            console.log(`Buscando questões para disciplina ID: ${disciplinaId}`); // Log para depuração
+            const response = await api.get(`/questoes/disciplina/${disciplinaId}`);
+            console.log('Questões carregadas:', response.data.questoes); // Verificar dados recebidos
+            setQuestoes(response.data.questoes);
+        } catch (error) {
+            console.error('Erro ao buscar questões:', error);
+        }
+    };
+
+
+    // Lida com a seleção de uma disciplina no menu
+    const handleDisciplinaClick = (disciplina) => {
+        setDisciplinaAtiva(disciplina);
+        setQuestoes([]); // Limpa as questões antes de buscar novas
+        fetchQuestoes(disciplina.disciplina_id); // Usa o ID correto da disciplina
+    };
+
+    // Verificação da reposta
+    const handleResponder = async (questaoId, alternativaSelecionada) => {
+        try {
+            const response = await api.post('/questoes/verificar-resposta', {
+                questaoId,
+                alternativaSelecionada,
+            });
+    
+            if (response.data.correta) {
+                alert(response.data.mensagem); // Exibe mensagem de sucesso
+            } else {
+                alert(response.data.mensagem); // Exibe mensagem de erro
+            }
+        } catch (error) {
+            console.error('Erro ao verificar a resposta:', error);
+            alert('Ocorreu um erro ao verificar a resposta. Tente novamente.');
+        }
+    };
+    
+
+
+    if (loading) {
+        return <div>Carregando...</div>;
+    }
 
     return (
         <div>
             <header className="d-flex justify-content-end py-1 bg-light border-bottom">
-
-
                 <button
-                    className="btn btn-outline-primary btn-sm me-1"
+                    className="btn btn-outline-primary"
                     onClick={() => navigate('/')}
                 >
                     Home
@@ -51,69 +96,82 @@ const HomePage = () => {
             </header>
 
             <div className="d-flex">
+                {/* Passa as disciplinas recebidas do backend para o Sidebar */}
                 <SidebarHome
                     disciplinas={disciplinas}
-                    onDisciplinaSelect={setDisciplinaAtiva}
+                    onDisciplinaSelect={handleDisciplinaClick}
                     disciplinaAtiva={disciplinaAtiva}
                 />
+
                 <div className="container mt-4">
-                    {/* Texto de boas-vindas */}
-                    <div className="bg-light p-4 rounded shadow-sm mb-4">
-                        <h2 className="text-center mb-3">Bem-vindo(a) à Plataforma Banco de Questões!</h2>
-                        <p className="text-muted">
-                            Estamos entusiasmados em tê-lo(a) conosco nesta jornada de aprendizado e preparação. Aqui, você terá acesso a uma ampla variedade de questões cuidadosamente selecionadas para impulsionar seus estudos e ampliar seus conhecimentos.
-                        </p>
-                        <h4 className="text-primary">🌟 Questões para Todos os Níveis</h4>
-                        <p className="mb-3">
-                            Explore questões de <strong>SQL</strong>, <strong>Redes de Computadores</strong> e <strong>Sistemas Operacionais</strong>, entre outras áreas fundamentais para sua formação.
-                        </p>
-                        <h4 className="text-primary">💼 Acesso Premium</h4>
-                        <p className="mb-3">
-                            Desbloqueie conteúdos exclusivos ao assinar o plano Premium por apenas <strong>R$ 99,00</strong>. Disciplinas como <strong>Banco de Dados</strong>, <strong>Programação</strong>, <strong>Linux</strong> e outras áreas de tecnologia estão à sua disposição para levar seus estudos ao próximo nível.
-                        </p>
-                        <h4 className="text-primary">💰 Desconto Exclusivo com Criptomoedas</h4>
-                        <p>
-                            Pague com <strong>Bitcoin (BTC)</strong>, <strong>BNB</strong> ou <strong>USDT</strong> e aproveite <strong>20% de desconto</strong> no valor do plano Premium. Economize enquanto investe no seu futuro!
-                        </p>
-
-                        {/* Linha de separação */}
-                        <hr className="my-4" />
-
-                        {/* QR Code Section */}
-                        <div className="d-flex align-items-center mt-4">
-                            {/* QR Code */}
-                            <div className="me-4">
-                                <img
-                                    src="/qrcode_pix.jpg"
-                                    alt="QR Code para pagamentos via Pix"
-                                    className="img-fluid"
-                                    style={{ maxWidth: '200px', border: '1px solid #ccc', borderRadius: '8px' }}
-                                />
-                            </div>
-
-                            {/* Informações ao lado do QR Code */}
-                            <div>
-                                <h5 className="text-primary">Deseja fazer uma doação ou pagamento?</h5>
-                                <p>
-                                    Caso prefira, você pode realizar o pagamento diretamente via <strong>Pix</strong> utilizando o QR Code ao lado. Sua contribuição é muito importante para que possamos continuar oferecendo conteúdos de qualidade e expandindo nossa plataforma!
-                                </p>
-                                {/* Logos Pix e Bitcoin */}
-                                <img
-                                    src="/Logo-powered_by_Banco_Central.png"
-                                    alt="Powered by Banco Central - Pix"
-                                    className="img-fluid mt-2"
-                                    style={{ maxWidth: '80px' }}
-                                />
-
-                            </div>
+                    {!disciplinaAtiva ? (
+                        <div className="bg-light p-4 rounded shadow-sm mb-4">
+                            <h2 className="text-center mb-3">Bem-vindo(a) à Plataforma Banco de Questões!</h2>
+                            <p className="text-muted">
+                                Estamos entusiasmados em tê-lo(a) conosco nesta jornada de aprendizado e preparação. Aqui, você terá acesso a uma ampla variedade de questões cuidadosamente selecionadas para impulsionar seus estudos e ampliar seus conhecimentos.
+                            </p>
                         </div>
-                    </div>
-
-                    {/* Conteúdo da Página */}
-                    {disciplinaAtiva ? (
-                        <h1>Conteúdo da disciplina: {disciplinaAtiva}</h1>
                     ) : (
-                        <h1>Selecione uma disciplina no menu lateral.</h1>
+                        <div>
+                            <h1 className="mb-4">Questões da disciplina: {disciplinaAtiva.nome_disciplina}</h1>
+                            {questoes.length > 0 ? (
+                                questoes.map((questao) => (
+                                    <div key={questao.id} className="questao mb-4 p-4 border rounded shadow-sm bg-light">
+                                        {/* Informações no topo */}
+                                        <div className="mb-3">
+                                            <p className="text-muted mb-1">
+                                                <strong>questao_id:</strong> {questao.id}   |
+                                                <strong>Ano:</strong> {questao.ano}     |
+                                                <strong> Banca:</strong> {questao.banca}    |
+                                                <strong> Disciplina:</strong> {questao.disciplina}  |
+                                                <strong> Cargo:</strong> {questao.cargo}
+                                            </p>
+                                        </div>
+
+                                        {/* Conteúdo da questão */}
+                                        <div className="mb-3">
+                                            <h5>{questao.questao}</h5>
+                                        </div>
+
+                                        {/* Alternativas */}
+                                        <ul className="list-group mb-3">
+                                            {['a', 'b', 'c', 'd', 'e'].map((letra) => (
+                                                questao[`alternativa_${letra}`] && (
+                                                    <li key={letra} className="list-group-item">
+                                                        <label className="d-flex align-items-center">
+                                                            <input
+                                                                type="radio"
+                                                                name={`questao_${questao.id}`} // Grupo de alternativas para cada questão
+                                                                value={letra}
+                                                                className="form-check-input me-2"
+                                                                onChange={() => setAlternativaSelecionada(letra)} // Atualiza a alternativa selecionada
+                                                            />
+                                                            {`${letra.toUpperCase()}) ${questao[`alternativa_${letra}`]}`}
+                                                        </label>
+                                                    </li>
+                                                )
+                                            ))}
+
+                                        </ul>
+
+                                        {/* Botão para responder */}
+                                        <div className="text-end">
+                                        <button
+    className="btn btn-primary w-100"
+    onClick={() => handleResponder(questao.id, alternativaSelecionada)} // Passa a alternativa selecionada
+>
+    Responder
+</button>
+
+
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>Nenhuma questão encontrada para essa disciplina.</p>
+                            )}
+                        </div>
+
                     )}
                 </div>
             </div>

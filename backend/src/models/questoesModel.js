@@ -236,3 +236,21 @@ exports.getQuestoesByDisciplina = async (disciplinaId) => {
         throw new Error('Erro ao buscar questões por disciplina.');
     }
 };
+
+
+exports.getAlternativaCorreta = async (questaoId) => {
+    const query = 'SELECT alternativa_correta FROM questoes WHERE questao_id = $1'; // Corrigido para $1
+    const values = [questaoId];
+
+    try {
+        const result = await pool.query(query, values); // Usa pool.query para consistência
+        if (result.rows.length > 0) {
+            return result.rows[0];
+        }
+        return null;
+    } catch (err) {
+        console.error('Erro ao buscar alternativa correta:', err.message);
+        throw new Error('Erro ao buscar alternativa correta.');
+    }
+};
+
