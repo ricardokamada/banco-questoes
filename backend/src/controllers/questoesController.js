@@ -204,7 +204,13 @@ exports.buscaID = async (req, res) => {
                 questao.alternativa_d,
                 questao.alternativa_e,
             ].filter(Boolean),
+            alternativa_correta: questao.alternativa_correta, // Adicione a alternativa correta
+            banca: questao.banca, // Adicione o campo banca
+            disciplina: questao.disciplina, // Adicione o campo disciplina
+            cargo: questao.cargo, // Adicione o campo cargo
         });
+        
+        
         
     } catch (err) {
         console.error('Erro ao buscar questão por ID:', err.message);
