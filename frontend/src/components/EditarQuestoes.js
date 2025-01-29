@@ -33,9 +33,6 @@ const EditarQuestoes = ({ show, onHide }) => {
         if (show) fetchData();
     }, [show]);
 
-
-
-
     // Função para buscar os dados da questão
     const fetchQuestao = async () => {
         if (!questaoId) {
@@ -51,7 +48,7 @@ const EditarQuestoes = ({ show, onHide }) => {
             const bancaSelecionada = bancas.find((b) => b.nome_banca === data.banca);
             const disciplinaSelecionada = disciplinas.find((d) => d.nome_disciplina === data.disciplina);
             const cargoSelecionado = cargos.find((c) => c.nome_cargo === data.cargo);
-            
+
             setForm({
                 enunciado: data.enunciado || '',
                 ano: data.ano || '',
@@ -61,11 +58,10 @@ const EditarQuestoes = ({ show, onHide }) => {
                 alternativaD: data.alternativas?.[3] || '',
                 alternativaE: data.alternativas?.[4] || '',
                 alternativaCorreta: data.alternativa_correta || '',
-                bancaId: bancaSelecionada?.banca_id || '', // Certifique-se de mapear o ID corretamente
-                disciplinaId: disciplinaSelecionada?.disciplina_id || '', // Certifique-se de mapear o ID corretamente
-                cargoId: cargoSelecionado?.cargo_id || '', // Certifique-se de mapear o ID corretamente
+                bancaId: bancaSelecionada?.banca_id || '',
+                disciplinaId: disciplinaSelecionada?.disciplina_id || '',
+                cargoId: cargoSelecionado?.cargo_id || '',
             });
-            
 
             setAlert({ show: false, variant: '', message: '' });
         } catch (error) {
@@ -74,16 +70,8 @@ const EditarQuestoes = ({ show, onHide }) => {
         }
     };
 
-
-
-
-
-
     // Função para salvar as alterações
     const handleSave = async () => {
-
-        console.log('Dados do formulário antes de salvar:', form);
-
         if (!form.bancaId || !form.disciplinaId || !form.cargoId) {
             setAlert({
                 show: true,
@@ -92,7 +80,7 @@ const EditarQuestoes = ({ show, onHide }) => {
             });
             return;
         }
-    
+
         try {
             await api.put(`/questoes/${questaoId}`, {
                 questao: form.enunciado,
@@ -107,29 +95,50 @@ const EditarQuestoes = ({ show, onHide }) => {
                 alternativa_e: form.alternativaE,
                 alternativa_correta: form.alternativaCorreta,
             });
-    
+
             setAlert({ show: true, variant: 'success', message: 'Questão atualizada com sucesso!' });
+
+            // Não chamar fetchQuestao imediatamente
+            // Em vez disso, podemos fechar o modal ou limpar o formulário após um tempo
+            setTimeout(() => {
+                setAlert({ show: false, variant: '', message: '' });
+                onHide(); // Fechar o modal após 3 segundos
+            }, 3000);
+
         } catch (error) {
             console.error('Erro ao atualizar questão:', error);
             setAlert({ show: true, variant: 'danger', message: 'Erro ao atualizar questão.' });
+
+            setTimeout(() => {
+                setAlert({ show: false, variant: '', message: '' });
+            }, 3000);
         }
     };
 
-
-
-
     // Função para lidar com as alterações no formulário
-const handleChange = (e) => {
-    const { name, value } = e.target;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
 
-    setForm((prev) => {
-        const updatedForm = { ...prev, [name]: value || '' };
-        console.log(`Estado atualizado após alteração no campo "${name}":`, updatedForm);
-        return updatedForm;
-    });
-};
+        setForm((prev) => {
+            let updatedForm = { ...prev, [name]: value };
 
-    
+            // Atualizar os campos de nome com base no ID selecionado
+            if (name === 'bancaId') {
+                const bancaSelecionada = bancas.find((b) => b.banca_id === value);
+                updatedForm.bancaNome = bancaSelecionada ? bancaSelecionada.nome_banca : '';
+            }
+            if (name === 'disciplinaId') {
+                const disciplinaSelecionada = disciplinas.find((d) => d.disciplina_id === value);
+                updatedForm.disciplinaNome = disciplinaSelecionada ? disciplinaSelecionada.nome_disciplina : '';
+            }
+            if (name === 'cargoId') {
+                const cargoSelecionado = cargos.find((c) => c.cargo_id === value);
+                updatedForm.cargoNome = cargoSelecionado ? cargoSelecionado.nome_cargo : '';
+            }
+
+            return updatedForm;
+        });
+    };
 
     return (
         <Modal show={show} onHide={onHide} backdrop="static" centered size="lg">
@@ -139,6 +148,7 @@ const handleChange = (e) => {
             <Modal.Body>
                 {alert.show && (
                     <Alert
+                        key={alert.message} // Adicionar uma key para garantir re-renderização
                         variant={alert.variant}
                         onClose={() => setAlert({ show: false, variant: '', message: '' })}
                         dismissible
@@ -157,9 +167,15 @@ const handleChange = (e) => {
                                 onChange={(e) => setQuestaoId(e.target.value)}
                             />
                         </Form.Group>
-                        <Button variant="primary" onClick={fetchQuestao}>
-                            Buscar Questão
-                        </Button>
+                        <div className="d-flex justify-content-end mt-3">
+                            <Button variant="primary" className="me-2" onClick={fetchQuestao}>
+                                Buscar Questão
+                            </Button>
+                            <Button variant="secondary" onClick={onHide}>
+                                Fechar
+                            </Button>
+                        </div>
+
                     </Form>
                 ) : (
                     <Form>
@@ -183,25 +199,14 @@ const handleChange = (e) => {
                             />
                         </Form.Group>
 
-
-
-
-
-                        <Form.Group controlId="bancaId">
+                        <Form.Group controlId="bancaId" style={{ marginBottom: '20px' }}>
                             <Form.Label>Banca</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="bancaId"
-                                value={form?.bancaId || ''} // Valor selecionado da banca
-                                onChange={handleChange} // Atualiza o estado ao mudar
+                                value={form?.bancaId || ''}
+                                onChange={handleChange}
                             >
-                                {/* Exibe o valor atual como o primeiro */}
-                                {form?.bancaId && (
-                                    <option value={form.bancaId}>
-                                        {bancas.find((b) => b.banca_id === form.bancaId)?.nome_banca || 'Banca atual'}
-                                    </option>
-                                )}
-                                {/* Exibe as demais opções */}
                                 {bancas.map((banca) => (
                                     <option key={banca.banca_id} value={banca.banca_id}>
                                         {banca.nome_banca}
@@ -210,21 +215,14 @@ const handleChange = (e) => {
                             </Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId="disciplinaId">
+                        <Form.Group controlId="disciplinaId" style={{ marginBottom: '20px' }}>
                             <Form.Label>Disciplina</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="disciplinaId"
-                                value={form?.disciplinaId || ''} // Valor selecionado da disciplina
-                                onChange={handleChange} // Atualiza o estado ao mudar
+                                value={form?.disciplinaId || ''}
+                                onChange={handleChange}
                             >
-                                {/* Exibe o valor atual como o primeiro */}
-                                {form?.disciplinaId && (
-                                    <option value={form.disciplinaId}>
-                                        {disciplinas.find((d) => d.disciplina_id === form.disciplinaId)?.nome_disciplina || 'Disciplina atual'}
-                                    </option>
-                                )}
-                                {/* Exibe as demais opções */}
                                 {disciplinas.map((disciplina) => (
                                     <option key={disciplina.disciplina_id} value={disciplina.disciplina_id}>
                                         {disciplina.nome_disciplina}
@@ -233,21 +231,14 @@ const handleChange = (e) => {
                             </Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId="cargoId">
+                        <Form.Group controlId="cargoId" style={{ marginBottom: '20px' }}>
                             <Form.Label>Cargo</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="cargoId"
-                                value={form?.cargoId || ''} // Valor selecionado do cargo
-                                onChange={handleChange} // Atualiza o estado ao mudar
+                                value={form?.cargoId || ''}
+                                onChange={handleChange}
                             >
-                                {/* Exibe o valor atual como o primeiro */}
-                                {form?.cargoId && (
-                                    <option value={form.cargoId}>
-                                        {cargos.find((c) => c.cargo_id === form.cargoId)?.nome_cargo || 'Cargo atual'}
-                                    </option>
-                                )}
-                                {/* Exibe as demais opções */}
                                 {cargos.map((cargo) => (
                                     <option key={cargo.cargo_id} value={cargo.cargo_id}>
                                         {cargo.nome_cargo}
@@ -255,8 +246,6 @@ const handleChange = (e) => {
                                 ))}
                             </Form.Control>
                         </Form.Group>
-
-
 
                         {/* Campos de alternativas */}
                         {['A', 'B', 'C', 'D', 'E'].map((letra) => (
@@ -293,11 +282,7 @@ const handleChange = (e) => {
                     </Form>
                 )}
             </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Fechar
-                </Button>
-            </Modal.Footer>
+
         </Modal>
     );
 };
