@@ -1,0 +1,49 @@
+Para descartar as alterações locais e restaurar o projeto ao estado que está no repositório remoto, você pode seguir os passos abaixo:
+
+1. Descartar alterações não commitadas
+Se você tem alterações que ainda não foram commitadas e quer descartá-las, você pode usar o seguinte comando:
+
+
+git checkout -- .
+Esse comando descarta todas as alterações nos arquivos rastreados (tracked files) e os restaura para o estado do último commit.
+
+2. Descartar alterações em arquivos específicos
+Se você quer descartar alterações apenas em arquivos específicos, você pode usar:
+
+
+git checkout -- caminho/do/arquivo
+Substitua caminho/do/arquivo pelo caminho do arquivo que você quer restaurar.
+
+3. Descartar alterações não rastreadas (untracked files)
+Se você tem arquivos não rastreados (que nunca foram adicionados ao Git) e quer removê-los, use:
+
+
+git clean -fd
+-f força a remoção dos arquivos.
+
+-d remove diretórios não rastreados também.
+
+4. Resetar o branch para o estado do repositório remoto
+Se você já fez commits locais que não quer manter e quer resetar seu branch para o estado do repositório remoto, você pode usar:
+
+bash
+Copy
+git fetch origin
+git reset --hard origin/nome-do-branch
+git fetch origin atualiza as referências do repositório remoto.
+
+git reset --hard origin/nome-do-branch reseta o branch local para o estado do branch remoto, descartando todos os commits e alterações locais.
+
+Substitua nome-do-branch pelo nome do branch que você está usando (por exemplo, main ou master).
+
+5. Cuidado com git reset --hard
+O comando git reset --hard é destrutivo e descarta todas as alterações locais e commits que não foram enviados ao repositório remoto. Certifique-se de que você realmente quer descartar essas alterações antes de usar esse comando.
+
+Resumo
+Para descartar alterações não commitadas: git checkout -- .
+
+Para remover arquivos não rastreados: git clean -fd
+
+Para resetar o branch para o estado do repositório remoto: git fetch origin e git reset --hard origin/nome-do-branch
+
+Sempre tenha certeza do que está fazendo, especialmente ao usar comandos como git reset --hard e git clean, pois eles podem remover dados permanentemente.
