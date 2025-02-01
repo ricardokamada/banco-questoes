@@ -5,13 +5,14 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
 const HomePage = () => {
-    const { loading } = useContext(AuthContext);
+    const { user, loading, logout } = useContext(AuthContext);
     const [disciplinas, setDisciplinas] = useState([]);
     const [alternativaSelecionada, setAlternativaSelecionada] = useState(null);
     const [disciplinaAtiva, setDisciplinaAtiva] = useState(null);
     const [questoes, setQuestoes] = useState([]);
-    const [respostaStatus, setRespostaStatus] = useState({}); // Armazena o status da resposta (correta/incorreta)
-    const [respostasSelecionadas, setRespostasSelecionadas] = useState({}); // Armazena a alternativa selecionada para cada questão
+    const [respostaStatus, setRespostaStatus] = useState({});
+    const [respostasSelecionadas, setRespostasSelecionadas] = useState({});
+    const [respostasCorretas, setRespostasCorretas] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,27 +43,42 @@ const HomePage = () => {
     };
 
     const handleResponder = async (questaoId, alternativaSelecionada) => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+    
         try {
             const response = await api.post('/questoes/verificar-resposta', {
                 questaoId,
                 alternativaSelecionada,
             });
 
+            console.log("*********************************",response.data)
+    
             setRespostaStatus((prevStatus) => ({
                 ...prevStatus,
                 [questaoId]: response.data.correta ? 'correta' : 'incorreta',
             }));
-
+    
             setRespostasSelecionadas((prevRespostas) => ({
                 ...prevRespostas,
                 [questaoId]: alternativaSelecionada,
             }));
-
+    
+            if (!response.data.correta) {
+                console.log(`Questão ${questaoId}: Alternativa correta recebida -> ${response.data.alternativa_correta}`); // Debug
+                setRespostasCorretas((prevRespostas) => ({
+                    ...prevRespostas,
+                    [questaoId]: response.data.alternativa_correta,
+                }));
+            }
         } catch (error) {
             console.error('Erro ao verificar a resposta:', error);
             alert('Ocorreu um erro ao verificar a resposta. Tente novamente.');
         }
     };
+    
 
     if (loading) {
         return <div>Carregando...</div>;
@@ -70,32 +86,27 @@ const HomePage = () => {
 
     return (
         <div>
-            <header className="d-flex justify-content-end py-1 bg-light border-bottom">
-                <button className="btn btn-outline-primary" onClick={() => navigate('/')}>
-                    Home
-                </button>
-                <button className="btn btn-outline-primary btn-sm me-1" onClick={() => navigate('/cadastro')}>
-                    Cadastro
-                </button>
-                <button className="btn btn-primary btn-sm" onClick={() => navigate('/login')}>
-                    Login
-                </button>
+            <header className="d-flex justify-content-between align-items-center py-1 bg-light border-bottom">
+                <img src="/bitcoin-btc-logo.png" alt="Bitcoin accepted" style={{ width: '50px', height: 'auto' }} />
+                <div>
+                    <button className="btn btn-outline-primary me-2" onClick={() => navigate('/')}>Home</button>
+                    <button className="btn btn-outline-primary me-1" onClick={() => navigate('/cadastro')}>Cadastro</button>
+                    {user ? (
+                        <button className="btn btn-danger" onClick={logout}>Sair</button>
+                    ) : (
+                        <button className="btn btn-primary" onClick={() => navigate('/login')}>Login</button>
+                    )}
+                </div>
             </header>
 
             <div className="d-flex">
-                <SidebarHome
-                    disciplinas={disciplinas}
-                    onDisciplinaSelect={handleDisciplinaClick}
-                    disciplinaAtiva={disciplinaAtiva}
-                />
+                <SidebarHome disciplinas={disciplinas} onDisciplinaSelect={handleDisciplinaClick} disciplinaAtiva={disciplinaAtiva} />
 
                 <div className="container mt-4">
                     {!disciplinaAtiva ? (
                         <div className="bg-light p-4 rounded shadow-sm mb-4">
                             <h2 className="text-center mb-3">Bem-vindo(a) à Plataforma Banco de Questões!</h2>
-                            <p className="text-muted">
-                                Estamos entusiasmados em tê-lo(a) conosco nesta jornada de aprendizado e preparação. Aqui, você terá acesso a uma ampla variedade de questões cuidadosamente selecionadas para impulsionar seus estudos e ampliar seus conhecimentos.
-                            </p>
+                            <p className="text-muted">Aqui você pode testar seus conhecimentos respondendo às questões disponíveis.</p>
                         </div>
                     ) : (
                         <div>
@@ -104,13 +115,12 @@ const HomePage = () => {
                                 questoes.map((questao) => (
                                     <div
                                         key={questao.id}
-                                        className={`questao mb-4 p-4 border rounded shadow-sm ${
-                                            respostaStatus[questao.id] === 'correta'
-                                                ? 'bg-success bg-opacity-10' // Verde bem claro
-                                                : respostaStatus[questao.id] === 'incorreta'
-                                                ? 'bg-danger bg-opacity-10' // Vermelho bem claro
+                                        className={`questao mb-4 p-4 border rounded shadow-sm ${respostaStatus[questao.id] === 'correta'
+                                            ? 'bg-success bg-opacity-10'
+                                            : respostaStatus[questao.id] === 'incorreta'
+                                                ? 'bg-danger bg-opacity-10'
                                                 : 'bg-light'
-                                        }`}
+                                            }`}
                                     >
                                         <div className="mb-3">
                                             <p className="mb-1">
@@ -133,8 +143,8 @@ const HomePage = () => {
                                                                 value={letra}
                                                                 className="form-check-input me-2"
                                                                 onChange={() => setAlternativaSelecionada(letra)}
-                                                                checked={respostasSelecionadas[questao.id] === letra} // Mantém a alternativa selecionada marcada
-                                                                disabled={respostaStatus[questao.id]} // Desabilita após responder
+                                                                checked={respostasSelecionadas[questao.id] === letra}
+                                                                disabled={respostaStatus[questao.id]}
                                                             />
                                                             {`${letra.toUpperCase()}) ${questao[`alternativa_${letra}`]}`}
                                                         </label>
@@ -144,13 +154,16 @@ const HomePage = () => {
                                         </ul>
 
                                         <div className="text-start">
-                                            <button
-                                                className="btn btn-primary btn-sm"
-                                                onClick={() => handleResponder(questao.id, alternativaSelecionada)}
-                                                disabled={respostaStatus[questao.id]} // Desabilita após responder
-                                            >
+                                            <button className="btn btn-primary btn-sm" onClick={() => handleResponder(questao.id, alternativaSelecionada)} disabled={respostaStatus[questao.id]}>
                                                 Responder
                                             </button>
+                                            {respostaStatus[questao.id] === 'correta' && (
+                                                <p className="text-success fw-bold mt-2">Parabéns! Você acertou!</p>
+                                            )}
+{respostaStatus[questao.id] === 'incorreta' && respostasCorretas[questao.id] && (
+    <p className="text-danger fw-bold mt-2">A alternativa correta é: {respostasCorretas[questao.id]}</p>
+)}
+
                                         </div>
                                     </div>
                                 ))

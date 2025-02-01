@@ -11,7 +11,6 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
       )
     : disciplinas;
 
-  console.log('Disciplinas após o filtro:', filteredDisciplinas);
 
   return (
     <div
@@ -54,7 +53,6 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
           <hr />
           <ul className="list-unstyled">
             {filteredDisciplinas.map((disciplina) => {
-              console.log('Renderizando disciplina:', disciplina.nome_disciplina);
               return (
                 <li
                   key={disciplina.disciplina_id}
