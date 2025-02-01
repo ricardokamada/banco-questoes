@@ -11,7 +11,10 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
       )
     : disciplinas;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 30bd1abaee91d5e60238d95607db431f6e098b76
   return (
     <div
       style={{
