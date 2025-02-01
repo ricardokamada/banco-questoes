@@ -373,6 +373,39 @@ exports.getQuestoesByDisciplina = async (req, res) => {
 // };
 
 // Verificar se a resposta está correta
+// exports.verificarResposta = async (req, res) => {
+//     const { questaoId, alternativaSelecionada } = req.body;
+
+//     if (!questaoId || !alternativaSelecionada) {
+//         return res.status(400).json({ error: 'O ID da questão e a alternativa selecionada são obrigatórios.' });
+//     }
+
+//     try {
+//         const resultado = await questoesModel.getAlternativaCorreta(questaoId);
+
+//         if (!resultado) {
+//             return res.status(404).json({ error: 'Questão não encontrada.' });
+//         }
+
+//         const correta = resultado.alternativa_correta; // A alternativa correta da questão
+//         const corretaFormatada = correta.toLowerCase(); // Formato consistente para comparação
+
+//         if (corretaFormatada === alternativaSelecionada.toLowerCase()) {
+//             return res.status(200).json({ correta: true, mensagem: 'Parabéns! Resposta correta.' });
+//         } else {
+//             return res.status(200).json({ 
+//                 correta: false, 
+//                 mensagem: 'Resposta incorreta. Tente novamente!',
+//                 alternativa_correta: correta // Adicionando a alternativa correta à resposta
+//             });
+//         }
+//     } catch (err) {
+//         console.error('Erro ao verificar a resposta:', err.message);
+//         res.status(500).json({ error: 'Erro ao verificar a resposta.' });
+//     }
+// };
+
+// Verificar se a resposta está correta
 exports.verificarResposta = async (req, res) => {
     const { questaoId, alternativaSelecionada } = req.body;
 

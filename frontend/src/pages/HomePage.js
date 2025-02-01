@@ -47,27 +47,24 @@ const HomePage = () => {
             navigate('/login');
             return;
         }
-    
+
         try {
             const response = await api.post('/questoes/verificar-resposta', {
                 questaoId,
                 alternativaSelecionada,
             });
 
-            console.log("*********************************",response.data)
-    
             setRespostaStatus((prevStatus) => ({
                 ...prevStatus,
                 [questaoId]: response.data.correta ? 'correta' : 'incorreta',
             }));
-    
+
             setRespostasSelecionadas((prevRespostas) => ({
                 ...prevRespostas,
                 [questaoId]: alternativaSelecionada,
             }));
-    
+
             if (!response.data.correta) {
-                console.log(`Questão ${questaoId}: Alternativa correta recebida -> ${response.data.alternativa_correta}`); // Debug
                 setRespostasCorretas((prevRespostas) => ({
                     ...prevRespostas,
                     [questaoId]: response.data.alternativa_correta,
@@ -78,7 +75,6 @@ const HomePage = () => {
             alert('Ocorreu um erro ao verificar a resposta. Tente novamente.');
         }
     };
-    
 
     if (loading) {
         return <div>Carregando...</div>;
@@ -154,17 +150,16 @@ const HomePage = () => {
                                         </ul>
 
                                         <div className="text-start">
-                                            <button className="btn btn-primary btn-sm" onClick={() => handleResponder(questao.id, alternativaSelecionada)} disabled={respostaStatus[questao.id]}>
-                                                Responder
-                                            </button>
-                                            {respostaStatus[questao.id] === 'correta' && (
-                                                <p className="text-success fw-bold mt-2">Parabéns! Você acertou!</p>
-                                            )}
-{respostaStatus[questao.id] === 'incorreta' && respostasCorretas[questao.id] && (
-    <p className="text-danger fw-bold mt-2">A alternativa correta é: {respostasCorretas[questao.id]}</p>
-)}
-
-                                        </div>
+    <button className="btn btn-primary btn-sm" onClick={() => handleResponder(questao.id, alternativaSelecionada)} disabled={respostaStatus[questao.id]}>
+        Responder
+    </button>
+    {respostaStatus[questao.id] === 'correta' && (
+        <p className="text-success fw-bold mt-2">Parabéns! Você acertou!</p>
+    )}
+    {respostaStatus[questao.id] === 'incorreta' && (
+        <p className="text-danger fw-bold mt-2">A alternativa correta é: {respostasCorretas[questao.id]}</p>
+    )}
+</div>
                                     </div>
                                 ))
                             ) : (
