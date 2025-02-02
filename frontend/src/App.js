@@ -5,6 +5,7 @@ import AdminPage from './pages/AdminPage'; // Painel administrativo
 import AuthProvider from './context/AuthContext'; // Importa o AuthProvider
 import HomePage from './pages/HomePage';
 import UserRegistrationForm from './pages/UserRegistrationForm';
+import PixPayment from './components/PixPayment';
 const App = () => {
     return (
         <AuthProvider>
@@ -21,6 +22,9 @@ const App = () => {
 
                     {/* Rota para o formulário de cadastro */}
                     <Route path="/cadastro" element={<UserRegistrationForm />} />
+
+                    {/* Rota para pagamento pix */}
+                    <Route path="/pagamento-pix" element={<PixPayment />} />
 
 
                 </Routes>

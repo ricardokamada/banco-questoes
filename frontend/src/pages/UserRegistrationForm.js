@@ -62,8 +62,8 @@ const UserRegistrationForm = () => {
           text: "Você será redirecionado para a página de pagamento.",
           confirmButtonText: "OK",
         }).then(() => {
-          // Redireciona para o link externo do Mercado Pago
-          window.location.href = "https://mpago.la/2zQL1GS";
+          
+            navigate("/pagamento-pix");
         });
       
         // Reset form
