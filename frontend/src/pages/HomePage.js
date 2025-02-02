@@ -82,11 +82,12 @@ const HomePage = () => {
 
     return (
         <div>
-            <header className="d-flex justify-content-between align-items-center py-1 bg-light border-bottom">
-                <img src="/bitcoin-btc-logo.png" alt="Bitcoin accepted" style={{ width: '50px', height: 'auto' }} />
-                <div>
-                    <button className="btn btn-outline-primary me-2" onClick={() => navigate('/')}>Home</button>
-                    <button className="btn btn-outline-primary me-1" onClick={() => navigate('/cadastro')}>Cadastro</button>
+            <header className="d-flex justify-content-end align-items-center py-3 bg-light border-bottom px-4">
+                <div className="d-flex gap-3 pe-4">
+                    <button className="btn btn-outline-primary" onClick={() => navigate('/')}>Home</button>
+                    {!user && (
+                        <button className="btn btn-outline-primary" onClick={() => navigate('/cadastro')}>Cadastro</button>
+                    )}
                     {user ? (
                         <button className="btn btn-danger" onClick={logout}>Sair</button>
                     ) : (
@@ -150,16 +151,16 @@ const HomePage = () => {
                                         </ul>
 
                                         <div className="text-start">
-    <button className="btn btn-primary btn-sm" onClick={() => handleResponder(questao.id, alternativaSelecionada)} disabled={respostaStatus[questao.id]}>
-        Responder
-    </button>
-    {respostaStatus[questao.id] === 'correta' && (
-        <p className="text-success fw-bold mt-2">Parabéns! Você acertou!</p>
-    )}
-    {respostaStatus[questao.id] === 'incorreta' && (
-        <p className="text-danger fw-bold mt-2">A alternativa correta é: {respostasCorretas[questao.id]}</p>
-    )}
-</div>
+                                            <button className="btn btn-primary btn-sm" onClick={() => handleResponder(questao.id, alternativaSelecionada)} disabled={respostaStatus[questao.id]}>
+                                                Responder
+                                            </button>
+                                            {respostaStatus[questao.id] === 'correta' && (
+                                                <p className="text-success fw-bold mt-2">Parabéns! Você acertou!</p>
+                                            )}
+                                            {respostaStatus[questao.id] === 'incorreta' && (
+                                                <p className="text-danger fw-bold mt-2">A alternativa correta é: {respostasCorretas[questao.id]}</p>
+                                            )}
+                                        </div>
                                     </div>
                                 ))
                             ) : (
