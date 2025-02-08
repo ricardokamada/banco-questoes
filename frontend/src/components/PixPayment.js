@@ -1,29 +1,96 @@
 import React from 'react';
-import '../styles/PixPayment.css'; // Certifique-se de criar esse CSS para estilização
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PaymentPage = () => {
-    return (
-        <div className="payment-container light-theme">
-            <h2 className="payment-title">Escolha seu método de pagamento</h2>
-            <p className="payment-quote">
-                "Essa é sua última chance. Depois disso, não há como voltar. Você toma a pílula azul e a história acaba. Você acorda em sua cama e acredita no que quiser acreditar. Você toma a pílula vermelha e fica no País das Maravilhas. E eu mostro a profundidade da toca do coelho." <br /><strong>- Morpheus</strong>
-            </p>
-            <div className="payment-methods full-width">
-                {/* Pagamento via PIX */}
-                <div className="payment-box expanded">
-                    <h3>Pagamento via PIX</h3>
-                    <p>Escaneie o QR Code abaixo para realizar o pagamento via PIX.</p>
-                    <img src="qrcode_pix.jpg" alt="QR Code PIX" className="qrcode larger-qrcode" />
-                    <img src="pix-logo.png" alt="PIX Logo" className="payment-logo" />
-                </div>
-                
-                {/* Pagamento via Bitcoin Lightning Network */}
-                <div className="payment-box expanded">
-                    <h3>Pagamento via Bitcoin (Lightning Network)</h3>
-                    <p>Escaneie o QR Code abaixo para realizar o pagamento via Lightning Network.</p>
-                    <img src="Lightning-BTC.png" alt="QR Code Bitcoin" className="qrcode larger-qrcode" />
-                    <img src="satoshi.png" alt="Satoshi" className="payment-logo" style={{ width: '100px', height: 'auto' }} />
+    const handleWhatsAppConfirmation = () => {
+        const message = encodeURIComponent("Olá! Gostaria de confirmar meu pagamento.");
+        window.open(`https://wa.me/5516996176613?text=${message}`, '_blank');
+    };
 
+    return (
+        <div className="min-vh-100 d-flex flex-column bg-white">
+            <div className="container flex-grow-1 py-5">
+                <div className="text-center mb-5">
+                    <h1 className="display-3 mb-4 text-dark fw-bold">Escolha seu método de pagamento</h1>
+                    <blockquote className="blockquote mb-5">
+                        <p className="lead text-secondary fs-4">
+                            "Essa é sua última chance. Depois disso, não há como voltar. Você toma a pílula azul e a história acaba. Você acorda em sua cama e acredita no que quiser acreditar. Você toma a pílula vermelha e fica no País das Maravilhas. E eu mostro a profundidade da toca do coelho."
+                        </p>
+                        <footer className="blockquote-footer text-dark mt-3 fs-5">
+                            <cite title="Morpheus">Morpheus</cite>
+                        </footer>
+                    </blockquote>
+                </div>
+
+                <div className="row g-5 justify-content-center align-items-stretch">
+                    {/* PIX Payment */}
+                    <div className="col-lg-6">
+                        <div className="card h-100 border-0 shadow-lg" style={{ backgroundColor: '#2c2c2c' }}>
+                            <div className="card-body text-center p-5">
+                                <h3 className="card-title mb-4 text-white fs-2 fw-bold">Pagamento via PIX</h3>
+                                <div className="bg-white p-4 rounded-4 mb-4">
+                                    <img 
+                                        src="qrcode_pix.jpg" 
+                                        alt="QR Code PIX" 
+                                        className="img-fluid mb-4"
+                                        style={{ maxWidth: '280px' }}
+                                    />
+                                    <img 
+                                        src="pix-logo.png" 
+                                        alt="PIX Logo" 
+                                        className="img-fluid mt-3"
+                                        style={{ maxWidth: '140px' }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Bitcoin Payment */}
+                    <div className="col-lg-6">
+                        <div className="card h-100 border-0 shadow-lg" style={{ backgroundColor: '#2c2c2c' }}>
+                            <div className="card-body text-center p-5">
+                                <h3 className="card-title mb-4 text-white fs-2 fw-bold">Bitcoin Lightning Network</h3>
+                                <div className="bg-white p-4 rounded-4 mb-4">
+                                    <img 
+                                        src="Lightning-BTC.jpg" 
+                                        alt="QR Code Bitcoin" 
+                                        className="img-fluid mb-4"
+                                        style={{ maxWidth: '280px' }}
+                                    />
+                                    <img 
+                                        src="satoshi.png" 
+                                        alt="Satoshi" 
+                                        className="img-fluid mt-3"
+                                        style={{ maxWidth: '140px' }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Confirmation Section */}
+                <div className="text-center mt-5 pt-4">
+                    <button 
+                        onClick={handleWhatsAppConfirmation}
+                        className="btn btn-dark btn-lg px-5 py-3 rounded-pill fw-bold fs-4 shadow"
+                        style={{
+                            letterSpacing: '1.5px',
+                            transition: 'transform 0.2s'
+                        }}
+                        onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                    >
+                        <i className="bi bi-whatsapp me-3"></i>
+                        Confirmar Pagamento
+                    </button>
+                    
+                    <div className="mt-4 p-3 bg-light rounded-3 mx-auto" style={{maxWidth: '800px'}}>
+                        <p className="text-secondary mb-0 small">
+                            "Os únicos métodos de pagamento aceitos são PIX e Bitcoin. Esta plataforma não possui um gateway de pagamento integrado, tornando a operação mais barata e eficiente. O botão disponível serve apenas para que o desenvolvedor possa confirmar seu pagamento e liberar o acesso à plataforma."
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
