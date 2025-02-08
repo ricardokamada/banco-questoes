@@ -19,36 +19,24 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
                 width: collapsed ? '60px' : '250px',
                 overflow: 'hidden',
                 transition: 'width 0.3s, background-color 0.3s',
-                background: 'rgba(255, 255, 255, 0.8)', // Fundo semi-transparente
-                boxShadow: '2px 0 12px rgba(0, 0, 0, 0.1)', // Sombra
-                borderRight: '1px solid rgba(0, 0, 0, 0.1)', // Borda sutil
-                backdropFilter: 'blur(10px)', // Efeito de desfoque no fundo
+                background: 'rgba(255, 255, 255, 0.8)',
+                boxShadow: '2px 0 12px rgba(0, 0, 0, 0.1)',
+                borderRight: '1px solid rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(10px)',
+                position: 'fixed',
+                zIndex: 1050,
+                height: '100vh'
             }}
-            className="vh-100 position-fixed" // Fixar a sidebar à esquerda
+            className="vh-100 sidebar-responsive"
         >
-            <button
-                onClick={() => setCollapsed(!collapsed)}
-                style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: collapsed ? '-20px' : '-40px',
-                    zIndex: 1000,
-                    transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                    background: '#ffffff',
-                    border: '1px solid #ddd',
-                    borderRadius: '50%',
-                    width: '40px',
-                    height: '40px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                    transition: 'transform 0.3s, right 0.3s',
-                }}
-            >
-                {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
-            </button>
+
+<button
+    onClick={() => setCollapsed(!collapsed)}
+    className="toggle-sidebar"
+>
+    {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
+</button>
+
 
             {!collapsed && (
                 <div className="p-4 custom-scrollbar" style={{ height: '100vh', overflowY: 'auto' }}>

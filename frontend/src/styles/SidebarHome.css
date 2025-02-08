@@ -23,3 +23,13 @@
     background: rgba(100, 100, 100, 0.6); /* Cor ao passar o mouse */
   }
   
+  @media (max-width: 768px) {
+    .sidebar-responsive {
+        width: 0;
+        transition: width 0.3s ease-in-out;
+    }
+    .sidebar-responsive.expanded {
+        width: 250px;
+    }
+}
+

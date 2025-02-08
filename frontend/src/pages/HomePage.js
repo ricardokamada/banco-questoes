@@ -82,7 +82,7 @@ const HomePage = () => {
 
     return (
         <div>
-            <header className="d-flex justify-content-end align-items-center py-1 bg-white shadow-sm border-bottom px-1">
+            <header className="d-flex flex-column flex-md-row justify-content-end align-items-center py-2 bg-white shadow-sm border-bottom px-2">
                 <div className="d-flex gap-3 pe-4">
                     <button className="btn btn-outline-dark rounded-pill px-3" onClick={() => navigate('/')}>Home</button>
                     {!user && (
@@ -96,7 +96,8 @@ const HomePage = () => {
                 </div>
             </header>
 
-            <div className="d-flex">
+            <div className="d-flex flex-column flex-md-row">
+
                 <SidebarHome disciplinas={disciplinas} onDisciplinaSelect={handleDisciplinaClick} disciplinaAtiva={disciplinaAtiva} />
 
                 <div className="container pt-1">
@@ -104,7 +105,7 @@ const HomePage = () => {
                         <div>
                             <section className="bg-light p-5 rounded-4 shadow-sm mb-4">
                                 <h2 className="display-6 text-center mb-4 fw-bold text-dark">
-                                Navegue pelo Conhecimento com o Banco de Questões Definitivo
+                                    Navegue pelo Conhecimento com o Banco de Questões Definitivo
                                 </h2>
 
                                 <p className="lead text-center mb-4">Aprimore seus conhecimentos em tecnologia com perguntas atualizadas e de excelência.</p>
@@ -112,7 +113,7 @@ const HomePage = () => {
 
                                 <div className="row g-4 mb-5">
                                     {['Linux', 'Bancos de Dados', 'Segurança da Informação', 'Programação', 'Testes de Software', 'Metodologia Agil', 'Redes de computadores', 'E muito mais ...'].map((item) => (
-                                        <div className="col-md-3" key={item}>
+                                        <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={item}>
                                             <div className="card h-100 border-0 shadow-sm">
                                                 <div className="card-body text-center">
                                                     <h5 className="card-title fw-bold text-dark mb-0">{item}</h5>
@@ -121,6 +122,7 @@ const HomePage = () => {
                                         </div>
                                     ))}
                                 </div>
+
 
                                 <h4 className="text-center mb-4 fw-bold text-dark">Diferenciais da nossa plataforma</h4>
                                 <div className="row g-4 mb-5">
