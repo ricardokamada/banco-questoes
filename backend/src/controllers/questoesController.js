@@ -305,19 +305,23 @@ exports.buscaEnunciado = async (req, res) => {
 
 exports.getQuestoesByDisciplina = async (req, res) => {
     const { disciplinaId } = req.params;
-    console.log('Recebido disciplinaId:', disciplinaId); // Verifica o valor recebido
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+
     if (!disciplinaId) {
         return res.status(400).json({ error: 'O ID da disciplina é obrigatório.' });
     }
 
     try {
-        const result = await questoesModel.getQuestoesByDisciplina(disciplinaId);
-        if (result.length === 0) {
-            return res.status(404).json({ error: 'Nenhuma questão encontrada para esta disciplina.' });
-        }
+        const todasQuestoes = await questoesModel.getQuestoesByDisciplina(disciplinaId);
+        const totalQuestoes = todasQuestoes.length;
+        const totalPages = Math.ceil(totalQuestoes / limit);
+
+        // Aplicamos a paginação diretamente no array carregado na memória
+        const questoesPaginadas = todasQuestoes.slice((page - 1) * limit, page * limit);
 
         // Formatar os dados para o frontend
-        const formattedResult = result.map((questao) => ({
+        const formattedResult = questoesPaginadas.map((questao) => ({
             id: questao.questao_id,
             questao: questao.questao,
             ano: questao.ano_prova,
@@ -333,14 +337,54 @@ exports.getQuestoesByDisciplina = async (req, res) => {
 
         res.status(200).json({
             questoes: formattedResult,
-            currentPage: 1, // Placeholder para paginação
-            totalPages: 1,  // Placeholder para paginação
+            currentPage: page,
+            totalPages,
         });
     } catch (err) {
         console.error('Erro ao buscar questões por disciplina:', err.message);
         res.status(500).json({ error: 'Erro ao buscar questões por disciplina.' });
     }
 };
+
+
+// exports.getQuestoesByDisciplina = async (req, res) => {
+//     const { disciplinaId } = req.params;
+//     console.log('Recebido disciplinaId:', disciplinaId); // Verifica o valor recebido
+//     if (!disciplinaId) {
+//         return res.status(400).json({ error: 'O ID da disciplina é obrigatório.' });
+//     }
+
+//     try {
+//         const result = await questoesModel.getQuestoesByDisciplina(disciplinaId);
+//         if (result.length === 0) {
+//             return res.status(404).json({ error: 'Nenhuma questão encontrada para esta disciplina.' });
+//         }
+
+//         // Formatar os dados para o frontend
+//         const formattedResult = result.map((questao) => ({
+//             id: questao.questao_id,
+//             questao: questao.questao,
+//             ano: questao.ano_prova,
+//             banca: questao.nome_banca,
+//             disciplina: questao.nome_disciplina,
+//             cargo: questao.nome_cargo,
+//             alternativa_a: questao.alternativa_a,
+//             alternativa_b: questao.alternativa_b,
+//             alternativa_c: questao.alternativa_c,
+//             alternativa_d: questao.alternativa_d,
+//             alternativa_e: questao.alternativa_e,
+//         }));
+
+//         res.status(200).json({
+//             questoes: formattedResult,
+//             currentPage: 1, // Placeholder para paginação
+//             totalPages: 1,  // Placeholder para paginação
+//         });
+//     } catch (err) {
+//         console.error('Erro ao buscar questões por disciplina:', err.message);
+//         res.status(500).json({ error: 'Erro ao buscar questões por disciplina.' });
+//     }
+// };
 
 
 // // Verificar se a resposta está correta
