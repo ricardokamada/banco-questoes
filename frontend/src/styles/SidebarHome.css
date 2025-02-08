@@ -33,3 +33,11 @@
     }
 }
 
+.toggle-sidebar {
+    opacity: 0.6; /* Torna o botão mais discreto */
+}
+
+.toggle-sidebar:hover {
+    opacity: 1; /* Deixa mais visível ao passar o mouse */
+    color: #495057; /* Cinza um pouco mais escuro */
+}

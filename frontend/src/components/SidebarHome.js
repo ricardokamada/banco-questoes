@@ -33,9 +33,21 @@ const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
 <button
     onClick={() => setCollapsed(!collapsed)}
     className="toggle-sidebar"
+    style={{
+        position: 'absolute',
+        top: '10px',
+        left: collapsed ? '10px' : '220px',
+        background: 'none',
+        border: 'none',
+        color: '#6c757d', // Cinza suave, mesma cor do texto
+        fontSize: '1rem', // Menor que o padrão
+        cursor: 'pointer',
+        transition: 'left 0.3s ease-in-out, color 0.3s ease-in-out',
+    }}
 >
     {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
 </button>
+
 
 
             {!collapsed && (
