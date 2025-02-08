@@ -9,11 +9,11 @@ const PaymentPage = () => {
 
     return (
         <div className="min-vh-100 d-flex flex-column bg-white">
-            <div className="container flex-grow-1 py-5">
+            <div className="container flex-grow-1 py-1">
                 <div className="text-center mb-5">
                     <h1 className="display-3 mb-4 text-dark fw-bold">Escolha seu método de pagamento</h1>
                     <blockquote className="blockquote mb-5">
-                        <p className="lead text-secondary fs-4">
+                        <p className="lead text-secondary fs-6">
                             "Essa é sua última chance. Depois disso, não há como voltar. Você toma a pílula azul e a história acaba. Você acorda em sua cama e acredita no que quiser acreditar. Você toma a pílula vermelha e fica no País das Maravilhas. E eu mostro a profundidade da toca do coelho."
                         </p>
                         <footer className="blockquote-footer text-dark mt-3 fs-5">
@@ -88,7 +88,7 @@ const PaymentPage = () => {
                     
                     <div className="mt-4 p-3 bg-light rounded-3 mx-auto" style={{maxWidth: '800px'}}>
                         <p className="text-secondary mb-0 small">
-                            "Os únicos métodos de pagamento aceitos são PIX e Bitcoin. Esta plataforma não possui um gateway de pagamento integrado, tornando a operação mais barata e eficiente. O botão disponível serve apenas para que o desenvolvedor possa confirmar seu pagamento e liberar o acesso à plataforma."
+                            "Os únicos métodos de pagamento aceitos são PIX e Bitcoin. Esta plataforma não possui um gateway de pagamento, pois assim torna a operação mais simples, barata e eficiente. O botão disponível serve apenas para enviar uma mensagem para o desenvolvedor informando seu pagamento e liberar o acesso à plataforma."
                         </p>
                     </div>
                 </div>
