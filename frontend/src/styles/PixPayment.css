@@ -1,0 +1,58 @@
+/* Tema Claro */
+.light-theme {
+    background-color: #f8f9fa;
+    color: #212529;
+    text-align: center;
+    padding: 40px;
+}
+
+/* Estilização do título */
+.payment-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d39e00;
+    margin-bottom: 20px;
+}
+
+/* Frase de Morpheus */
+.payment-quote {
+    font-style: italic;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-size: 1.2rem;
+}
+
+/* Organização dos métodos de pagamento */
+.payment-methods {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Estilização dos quadrantes de pagamento */
+.payment-box {
+    flex: 1;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* QR Codes maiores e centralizados */
+.larger-qrcode {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+/* Estilização dos logos */
+.payment-logo {
+    width: 150px;
+    margin-top: 10px;
+}
