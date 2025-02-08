@@ -1,0 +1,25 @@
+/* Estilo moderno e transparente para scrollbar */
+.custom-scrollbar {
+    scrollbar-width: thin; /* Deixa a barra de rolagem mais fina */
+    scrollbar-color: rgba(100, 100, 100, 0.3) transparent; /* Cor do scroll e do fundo */
+  }
+  
+  /* Personalizando a barra de rolagem no Chrome e Edge */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px; /* Deixa a barra de rolagem mais fina */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent; /* Fundo transparente */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.3); /* Cor da barra mais suave */
+    border-radius: 10px; /* Deixa a barra arredondada */
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.6); /* Cor ao passar o mouse */
+  }
+  
