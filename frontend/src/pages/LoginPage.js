@@ -16,7 +16,7 @@ const LoginPage = () => {
 
     try {
       await login(email, password);
-      navigate('/admin');
+      navigate('/');
     } catch (err) {
       console.error('Erro no login:', err.response?.data?.error || err.message);
       setError(err.response?.data?.error || 'Erro ao realizar login.');
