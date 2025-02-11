@@ -1,34 +1,34 @@
 import React, { useState } from 'react';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../../services/api';
 
-const CadastroDisciplinas = ({ show, onHide }) => {
-  const [nomeDisciplina, setNomeDisciplina] = useState('');
+const CadastroCargos = ({ show, onHide }) => {
+  const [nomeCargo, setNomeCargo] = useState('');
   const [alert, setAlert] = useState({ show: false, variant: '', message: '' });
 
   const handleSave = async () => {
-    if (!nomeDisciplina.trim()) {
-      setAlert({ show: true, variant: 'danger', message: 'O nome da disciplina é obrigatório!' });
+    if (!nomeCargo.trim()) {
+      setAlert({ show: true, variant: 'danger', message: 'O nome do cargo é obrigatório!' });
       return;
     }
 
     try {
-      await api.post('/disciplinas', { nome_disciplina: nomeDisciplina.trim() });
-      setAlert({ show: true, variant: 'success', message: 'Disciplina cadastrado com sucesso!' });
+      await api.post('/cargos', { nome_cargo: nomeCargo.trim() });
+      setAlert({ show: true, variant: 'success', message: 'Cargo cadastrado com sucesso!' });
       setTimeout(() => {
         setAlert({ show: false, variant: '', message: '' });
         onHide();
       }, 2000);
     } catch (error) {
-      console.error('Erro ao cadastrar disciplina :', error.response?.data || error.message);
-      setAlert({ show: true, variant: 'danger', message: 'Erro ao cadastrar disciplina. Tente novamente.' });
+      console.error('Erro ao cadastrar cargo:', error.response?.data || error.message);
+      setAlert({ show: true, variant: 'danger', message: 'Erro ao cadastrar cargo. Tente novamente.' });
     }
   };
 
   return (
     <Modal show={show} onHide={onHide} backdrop="static" centered>
       <Modal.Header closeButton>
-        <Modal.Title>Cadastrar Nova Disciplina</Modal.Title>
+        <Modal.Title>Cadastrar Novo Cargo</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {alert.show && (
@@ -37,14 +37,14 @@ const CadastroDisciplinas = ({ show, onHide }) => {
           </Alert>
         )}
         <div className="mb-3">
-          <label htmlFor="nomeDisciplina" className="form-label">Nome da disciplina</label>
+          <label htmlFor="nomeCargo" className="form-label">Nome do Cargo</label>
           <input
             type="text"
             className="form-control"
-            id="nomeDisciplina"
-            value={nomeDisciplina}
-            onChange={(e) => setNomeDisciplina(e.target.value)}
-            placeholder="Digite o nome da disciplina"
+            id="nomeCargo"
+            value={nomeCargo}
+            onChange={(e) => setNomeCargo(e.target.value)}
+            placeholder="Digite o nome do cargo"
           />
         </div>
       </Modal.Body>
@@ -60,4 +60,4 @@ const CadastroDisciplinas = ({ show, onHide }) => {
   );
 };
 
-export default CadastroDisciplinas;
+export default CadastroCargos;

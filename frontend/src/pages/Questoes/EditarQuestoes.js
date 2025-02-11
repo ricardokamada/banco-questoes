@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../../services/api';
 
 const EditarQuestoes = ({ show, onHide }) => {
     const [questaoId, setQuestaoId] = useState(''); // Armazena o ID da questão

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../../services/api';
 
 const CadastroQuestoes = ({ show, onHide }) => {
     const [form, setForm] = useState({

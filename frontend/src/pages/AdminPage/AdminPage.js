@@ -1,16 +1,16 @@
 import React, { useContext, useState } from 'react';
-import '../styles/AdminPage.css';
+import '../../styles/AdminPage.css';
 import { Navigate } from 'react-router-dom';
-import Sidebar from '../components/SidebarAdmin';
-import { AuthContext } from '../context/AuthContext';
-import CadastroQuestoes from '../components/CadastroQuestoes';
-import ExcluirQuestoes from '../components/ExcluirQuestoes';
-import ExcluirCargos from '../components/ExcluirCargos';
-import CadastroCargos from '../components/CadastroCargos';
-import CadastroDisciplinas from '../components/CadastroDisciplinas';
-import ExcluirDisciplinas from '../components/ExcluirDisciplinas';
-import EditarQuestoes from '../components/EditarQuestoes';
-import PesquisarQuestoes from '../components/PesquisarQuestoes';
+import Sidebar from '../../components/layout/SidebarAdmin';
+import { AuthContext } from '../../context/AuthContext';
+import CadastroQuestoes from '../Questoes/CadastroQuestoes';
+import ExcluirQuestoes from '../../pages/Questoes/ExcluirQuestoes';
+import ExcluirCargos from '../../pages/Cargos/ExcluirCargos';
+import CadastroCargos from '../Cargos/CadastroCargos';
+import CadastroDisciplinas from '../Disciplinas/CadastroDisciplinas';
+import ExcluirDisciplinas from '../Disciplinas/ExcluirDisciplinas';
+import EditarQuestoes from '../Questoes/EditarQuestoes';
+import PesquisarQuestoes from '../Questoes/PesquisarQuestoes';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 
 const AdminPage = () => {

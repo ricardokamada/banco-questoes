@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SidebarHome from '../components/SidebarHome';
-import { AuthContext } from '../context/AuthContext';
-import api from '../services/api';
+import SidebarHome from '../../components/layout/SidebarHome';
+import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const HomePage = () => {
     const { user, loading, logout } = useContext(AuthContext);

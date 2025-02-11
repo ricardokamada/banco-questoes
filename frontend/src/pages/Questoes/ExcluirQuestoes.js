@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Alert, Table, Form } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../../services/api';
 
 const ExcluirQuestoes = ({ show, onHide }) => {
     const [searchId, setSearchId] = useState(''); // Estado para busca por ID
