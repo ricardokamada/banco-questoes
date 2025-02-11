@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button, Alert } from 'react-bootstrap';
+import { Modal, Button, Alert, Nav, Tab, Row, Col, Badge } from 'react-bootstrap';
 import api from '../../services/api';
 
 const CadastroQuestoes = ({ show, onHide }) => {
@@ -22,69 +22,63 @@ const CadastroQuestoes = ({ show, onHide }) => {
     const [disciplinas, setDisciplinas] = useState([]);
     const [cargos, setCargos] = useState([]);
     const [alert, setAlert] = useState({ show: false, variant: '', message: '' });
+    const [errors, setErrors] = useState({});
+    const [activeTab, setActiveTab] = useState('detalhes');
 
     useEffect(() => {
-        const fetchBancas = async () => {
+        const fetchData = async () => {
             try {
-                const response = await api.get('/bancas');
-                setBancas(response.data);
+                const [bancasRes, disciplinasRes, cargosRes] = await Promise.all([
+                    api.get('/bancas'),
+                    api.get('/disciplinas'),
+                    api.get('/cargos')
+                ]);
+                setBancas(bancasRes.data);
+                setDisciplinas(disciplinasRes.data);
+                setCargos(cargosRes.data);
             } catch (error) {
-                console.error('Erro ao buscar bancas:', error);
-                alert('Erro ao carregar bancas. Verifique o backend.');
+                console.error('Erro ao carregar dados:', error);
+                showAlert('danger', 'Erro ao carregar dados básicos. Tente recarregar a página.');
             }
         };
-
-        const fetchDisciplinas = async () => {
-            try {
-                const response = await api.get('/disciplinas');
-                setDisciplinas(response.data);
-            } catch (error) {
-                console.error('Erro ao buscar disciplinas:', error);
-                alert('Erro ao carregar disciplinas. Verifique o backend.');
-            }
-        };
-
-        const fetchCargos = async () => {
-            try {
-                const response = await api.get('/cargos');
-                setCargos(response.data);
-            } catch (error) {
-                console.error('Erro ao buscar cargos:', error);
-                alert('Erro ao carregar cargos. Verifique o backend.');
-            }
-        };
-
-        fetchBancas();
-        fetchDisciplinas();
-        fetchCargos();
+        fetchData();
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
+        if (errors[name]) setErrors({...errors, [name]: null});
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        const requiredFields = [
+            'questao', 'banca', 'disciplina', 'cargo', 'ano',
+            'alternativaA', 'alternativaB', 'alternativaC', 'alternativaD'
+        ];
+
+        requiredFields.forEach(field => {
+            if (!form[field]?.trim()) {
+                newErrors[field] = 'Campo obrigatório';
+            }
+        });
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const showAlert = (variant, message) => {
+        setAlert({ show: true, variant, message });
+        setTimeout(() => setAlert({...alert, show: false}), 5000);
     };
 
     const handleSave = async () => {
-        const banca = bancas.find((b) => b.nome_banca === form.banca);
-        const disciplina = disciplinas.find((d) => d.nome_disciplina === form.disciplina);
-        const cargo = cargos.find((c) => c.nome_cargo === form.cargo);
-    
-        const missingFields = [];
-        if (!banca) missingFields.push('banca_id');
-        if (!disciplina) missingFields.push('disciplina_id');
-        if (!cargo) missingFields.push('cargo_id');
-        if (!form.questao.trim()) missingFields.push('questao');
-        if (!form.ano.trim()) missingFields.push('ano_prova');
-        if (!form.alternativaA.trim()) missingFields.push('alternativa_a');
-        if (!form.alternativaB.trim()) missingFields.push('alternativa_b');
-        if (!form.alternativaC.trim()) missingFields.push('alternativa_c');
-        if (!form.alternativaD.trim()) missingFields.push('alternativa_d');
-    
-        if (missingFields.length > 0) {
-            setAlert({ show: true, variant: 'danger', message: `Erro: Campos obrigatórios ausentes - ${missingFields.join(', ')}` });
-            return;
-        }
-    
+        if (!validateForm()) return;
+
+        const banca = bancas.find(b => b.nome_banca === form.banca);
+        const disciplina = disciplinas.find(d => d.nome_disciplina === form.disciplina);
+        const cargo = cargos.find(c => c.nome_cargo === form.cargo);
+
         const payload = {
             questao: form.questao.trim(),
             banca_id: banca?.banca_id,
@@ -98,161 +92,183 @@ const CadastroQuestoes = ({ show, onHide }) => {
             alternativa_d: form.alternativaD.trim(),
             alternativa_e: form.alternativaE.trim()
         };
-    
+
         try {
-            await api.post('http://localhost:3000/api/questoes/', payload);
-            setAlert({ show: true, variant: 'success', message: 'Questão salva com sucesso!' });
-    
-            // Limpar o formulário
+            await api.post('/questoes/', payload);
+            showAlert('success', 'Questão cadastrada com sucesso!');
             setForm({
-                questao: '',
-                banca: '',
-                disciplina: '',
-                cargo: '',
-                ano: '',
-                alternativaA: '',
-                alternativaB: '',
-                alternativaC: '',
-                alternativaD: '',
-                alternativaE: '',
+                questao: '', banca: '', disciplina: '', cargo: '', ano: '',
+                alternativaA: '', alternativaB: '', alternativaC: '', alternativaD: '', alternativaE: '',
                 alternativaCorreta: 'A'
             });
+            setActiveTab('detalhes');
         } catch (error) {
-            console.error('Erro ao salvar questão:', error.response?.data || error.message);
-            setAlert({ show: true, variant: 'danger', message: 'Erro ao salvar questão. Verifique os dados e tente novamente.' });
+            console.error('Erro ao salvar:', error);
+            showAlert('danger', error.response?.data?.message || 'Erro ao salvar questão');
         }
     };
-    
+
+    const renderAlternativa = (letra) => (
+        <div className="mb-3 position-relative" key={letra}>
+            <div className="input-group">
+                <span className="input-group-text" style={{ width: '40px' }}>
+                    {letra}
+                    {form.alternativaCorreta === letra && (
+                        <Badge bg="success" className="ms-2" pill>✓</Badge>
+                    )}
+                </span>
+                <input
+                    type="text"
+                    className={`form-control ${errors[`alternativa${letra}`] ? 'is-invalid' : ''}`}
+                    name={`alternativa${letra}`}
+                    value={form[`alternativa${letra}`]}
+                    onChange={handleChange}
+                    placeholder={`Texto da alternativa ${letra}`}
+                />
+                {errors[`alternativa${letra}`] && (
+                    <div className="invalid-feedback">{errors[`alternativa${letra}`]}</div>
+                )}
+            </div>
+        </div>
+    );
 
     return (
         <Modal show={show} onHide={onHide} backdrop="static" size="xl" centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Cadastro de Questões</Modal.Title>
+            <Modal.Header closeButton className="bg-light">
+                <Modal.Title>📝 Cadastro de Questão</Modal.Title>
             </Modal.Header>
+            
             <Modal.Body>
-                {alert.show && (
-                    <Alert variant={alert.variant} onClose={() => setAlert({ show: false, variant: '', message: '' })} dismissible>
-                        {alert.message}
-                    </Alert>
-                )}
-                <form>
-                    <div className="mb-3">
-                        <label htmlFor="questao" className="form-label">Questão</label>
-                        <textarea
-                            className="form-control"
-                            id="questao"
-                            name="questao"
-                            rows="3"
-                            value={form.questao}
-                            onChange={handleChange}
-                            placeholder="Digite o enunciado da questão"
-                        />
-                    </div>
+                <Tab.Container activeKey={activeTab} onSelect={setActiveTab}>
+                    <Nav variant="tabs" className="mb-4">
+                        <Nav.Item>
+                            <Nav.Link eventKey="detalhes">Detalhes da Questão</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="alternativas">Alternativas</Nav.Link>
+                        </Nav.Item>
+                    </Nav>
 
-                    <div className="row">
-                        <div className="col-md-4 mb-3">
-                            <label htmlFor="banca" className="form-label">Banca</label>
-                            <select
-                                className="form-control"
-                                id="banca"
-                                name="banca"
-                                value={form.banca}
-                                onChange={handleChange}
-                            >
-                                <option value="">Selecione uma banca</option>
-                                {bancas.map((b) => (
-                                    <option key={b.banca_id} value={b.nome_banca}>{b.nome_banca}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="col-md-4 mb-3">
-                            <label htmlFor="disciplina" className="form-label">Disciplina</label>
-                            <select
-                                className="form-control"
-                                id="disciplina"
-                                name="disciplina"
-                                value={form.disciplina}
-                                onChange={handleChange}
-                            >
-                                <option value="">Selecione uma disciplina</option>
-                                {disciplinas.map((d) => (
-                                    <option key={d.disciplina_id} value={d.nome_disciplina}>{d.nome_disciplina}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="col-md-4 mb-3">
-                            <label htmlFor="cargo" className="form-label">Cargo</label>
-                            <select
-                                className="form-control"
-                                id="cargo"
-                                name="cargo"
-                                value={form.cargo}
-                                onChange={handleChange}
-                            >
-                                <option value="">Selecione um cargo</option>
-                                {cargos.map((c) => (
-                                    <option key={c.cargo_id} value={c.nome_cargo}>{c.nome_cargo}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
+                    {alert.show && (
+                        <Alert variant={alert.variant} dismissible onClose={() => setAlert({...alert, show: false})}>
+                            {alert.message}
+                        </Alert>
+                    )}
 
-                    <div className="row">
-                        <div className="col-md-6 mb-3">
-                            <label htmlFor="ano" className="form-label">Ano</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                id="ano"
-                                name="ano"
-                                value={form.ano}
-                                onChange={handleChange}
-                                placeholder="Digite o ano da questão"
-                            />
-                        </div>
-                    </div>
+                    <Tab.Content>
+                        <Tab.Pane eventKey="detalhes">
+                            <div className="row g-3">
+                                <div className="col-12">
+                                    <label className="form-label">Enunciado da Questão *</label>
+                                    <textarea
+                                        className={`form-control ${errors.questao ? 'is-invalid' : ''}`}
+                                        name="questao"
+                                        value={form.questao}
+                                        onChange={handleChange}
+                                        rows="4"
+                                        placeholder="Digite o enunciado completo da questão..."
+                                    />
+                                    {errors.questao && <div className="invalid-feedback">{errors.questao}</div>}
+                                </div>
 
-                    {['A', 'B', 'C', 'D', 'E'].map((letra) => (
-                        <div className="mb-3" key={letra}>
-                            <label htmlFor={`alternativa${letra}`} className="form-label">Alternativa {letra}</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id={`alternativa${letra}`}
-                                name={`alternativa${letra}`}
-                                value={form[`alternativa${letra}`]}
-                                onChange={handleChange}
-                                placeholder={`Digite a alternativa ${letra}`}
-                            />
-                        </div>
-                    ))}
+                                <div className="col-md-6">
+                                    <label className="form-label">Banca *</label>
+                                    <select
+                                        className={`form-select ${errors.banca ? 'is-invalid' : ''}`}
+                                        name="banca"
+                                        value={form.banca}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Selecione a banca...</option>
+                                        {bancas.map(b => (
+                                            <option key={b.banca_id} value={b.nome_banca}>{b.nome_banca}</option>
+                                        ))}
+                                    </select>
+                                    {errors.banca && <div className="invalid-feedback">{errors.banca}</div>}
+                                </div>
 
-                    <div className="mb-3">
-                        <label htmlFor="alternativaCorreta" className="form-label">Alternativa Correta</label>
-                        <select
-                            className="form-control"
-                            id="alternativaCorreta"
-                            name="alternativaCorreta"
-                            value={form.alternativaCorreta}
-                            onChange={handleChange}
-                        >
-                            {['A', 'B', 'C', 'D', 'E'].map((letra) => (
-                                <option key={letra} value={letra}>
-                                    {letra}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                                <div className="col-md-6">
+                                    <label className="form-label">Ano da Prova *</label>
+                                    <input
+                                        type="number"
+                                        className={`form-control ${errors.ano ? 'is-invalid' : ''}`}
+                                        name="ano"
+                                        value={form.ano}
+                                        onChange={handleChange}
+                                        placeholder="Ex: 2023"
+                                    />
+                                    {errors.ano && <div className="invalid-feedback">{errors.ano}</div>}
+                                </div>
 
+                                <div className="col-md-6">
+                                    <label className="form-label">Disciplina *</label>
+                                    <select
+                                        className={`form-select ${errors.disciplina ? 'is-invalid' : ''}`}
+                                        name="disciplina"
+                                        value={form.disciplina}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Selecione a disciplina...</option>
+                                        {disciplinas.map(d => (
+                                            <option key={d.disciplina_id} value={d.nome_disciplina}>{d.nome_disciplina}</option>
+                                        ))}
+                                    </select>
+                                    {errors.disciplina && <div className="invalid-feedback">{errors.disciplina}</div>}
+                                </div>
 
-                </form>
+                                <div className="col-md-6">
+                                    <label className="form-label">Cargo *</label>
+                                    <select
+                                        className={`form-select ${errors.cargo ? 'is-invalid' : ''}`}
+                                        name="cargo"
+                                        value={form.cargo}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Selecione o cargo...</option>
+                                        {cargos.map(c => (
+                                            <option key={c.cargo_id} value={c.nome_cargo}>{c.nome_cargo}</option>
+                                        ))}
+                                    </select>
+                                    {errors.cargo && <div className="invalid-feedback">{errors.cargo}</div>}
+                                </div>
+                            </div>
+                        </Tab.Pane>
+
+                        <Tab.Pane eventKey="alternativas">
+                            <div className="row g-3">
+                                <div className="col-12">
+                                    <p className="text-muted small mb-4">
+                                        Preencha pelo menos as alternativas A a D. Marque a correta selecionando ao lado.
+                                    </p>
+                                    
+                                    <div className="mb-4">
+                                        <label className="form-label">Alternativa Correta</label>
+                                        <select
+                                            className="form-select"
+                                            name="alternativaCorreta"
+                                            value={form.alternativaCorreta}
+                                            onChange={handleChange}
+                                        >
+                                            {['A', 'B', 'C', 'D', 'E'].map(letra => (
+                                                <option key={letra} value={letra}>Alternativa {letra}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {['A', 'B', 'C', 'D', 'E'].map(renderAlternativa)}
+                                </div>
+                            </div>
+                        </Tab.Pane>
+                    </Tab.Content>
+                </Tab.Container>
             </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Fechar
+
+            <Modal.Footer className="d-flex justify-content-between">
+                <Button variant="outline-secondary" onClick={onHide}>
+                    Cancelar
                 </Button>
                 <Button variant="primary" onClick={handleSave}>
-                    Salvar
+                    Salvar Questão
                 </Button>
             </Modal.Footer>
         </Modal>
