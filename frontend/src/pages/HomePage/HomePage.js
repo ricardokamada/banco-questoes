@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarHome from '../../components/layout/SidebarHome';
-import HomeHeader from '../../pages/HomePage/HomeHeader';
+import HomeHeader from '../../components/layout/HomeHeader';
 import HomeContent from '../../pages/HomePage/HomeContent';
 import QuestoesList from '../../pages/Questoes/QuestoesList';
 import { AuthContext } from '../../context/AuthContext';
