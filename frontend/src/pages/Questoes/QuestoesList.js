@@ -1,6 +1,9 @@
 // src/components/QuestoesList.js
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; // Escolha um estilo (ex: docco)
+
 
 const QuestoesList = ({ questoes, disciplinaAtiva, fetchQuestoes, currentPage, totalPages, user, navigate }) => {
     const [respostaStatus, setRespostaStatus] = useState({});
@@ -48,6 +51,29 @@ const QuestoesList = ({ questoes, disciplinaAtiva, fetchQuestoes, currentPage, t
         }
     };
 
+    const formatarTextoComCodigo = (texto) => {
+        const partes = texto.split(/(```[\s\S]*?```)/g); // Divide o texto em blocos normais e de código
+
+        return partes.map((parte, index) => {
+            if (parte.startsWith('```') && parte.endsWith('```')) {
+                const linguagem = parte.match(/```(\w+)/)?.[1] || 'javascript'; // Detecta a linguagem
+                const codigo = parte.replace(/```(\w+)?/g, '').trim(); // Remove os marcadores
+
+                return (
+                    <SyntaxHighlighter
+                        key={index}
+                        language={linguagem}
+                        style={docco}
+                        className="mt-3 mb-3 p-3 rounded"
+                    >
+                        {codigo}
+                    </SyntaxHighlighter>
+                );
+            }
+            return <span key={index}>{parte}</span>; // Texto normal
+        });
+    };
+
     return (
         <div>
             <h1 className="mb-4">Questões da disciplina: {disciplinaAtiva?.nome_disciplina}</h1>
@@ -56,13 +82,12 @@ const QuestoesList = ({ questoes, disciplinaAtiva, fetchQuestoes, currentPage, t
                     {questoes.map((questao) => (
                         <div
                             key={questao.id}
-                            className={`questao mb-4 p-4 border rounded shadow-sm ${
-                                respostaStatus[questao.id] === 'correta'
+                            className={`questao mb-4 p-4 border rounded shadow-sm ${respostaStatus[questao.id] === 'correta'
                                     ? 'bg-success bg-opacity-10'
                                     : respostaStatus[questao.id] === 'incorreta'
-                                    ? 'bg-danger bg-opacity-10'
-                                    : 'bg-light'
-                            }`}
+                                        ? 'bg-danger bg-opacity-10'
+                                        : 'bg-light'
+                                }`}
                         >
                             <div className="mb-3">
                                 <p className="mb-1">
@@ -73,7 +98,7 @@ const QuestoesList = ({ questoes, disciplinaAtiva, fetchQuestoes, currentPage, t
                             </div>
 
                             <div className="mb-3">
-                                <h5>{questao.questao}</h5>
+                                <h5>{formatarTextoComCodigo(questao.questao)}</h5>
                             </div>
 
                             <ul className="list-group mb-3">
