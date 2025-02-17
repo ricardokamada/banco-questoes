@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Alert, Table, Form } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../../services/api';
 
 const ExcluirCargos = ({ show, onHide }) => {
     const [searchTerm, setSearchTerm] = useState(''); // Busca por nome ou ID do cargo

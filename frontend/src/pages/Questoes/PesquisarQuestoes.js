@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button, Table, Pagination, Form } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../../services/api';
 
 const PesquisarQuestoes = ({ show, onHide }) => {
     const [disciplinas, setDisciplinas] = useState([]); // Lista de disciplinas

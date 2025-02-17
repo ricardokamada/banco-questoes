@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa'; // Importando ícones
-import '../styles/SidebarHome.css'
+import '../../styles/SidebarHome.css'
 
 const SidebarHome = ({ disciplinas, onDisciplinaSelect, disciplinaAtiva }) => {
     const [collapsed, setCollapsed] = useState(false);

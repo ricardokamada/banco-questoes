@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage'; // Página de login
-import AdminPage from './pages/AdminPage'; // Painel administrativo
+import LoginPage from './pages/LoginPage/LoginPage'; // Página de login
+import AdminPage from './pages/AdminPage/AdminPage'; // Painel administrativo
 import AuthProvider from './context/AuthContext'; // Importa o AuthProvider
-import HomePage from './pages/HomePage';
-import UserRegistrationForm from './pages/UserRegistrationForm';
-import PixPayment from './components/PixPayment';
+import HomePage from './pages/HomePage/HomePage';
+import UserRegistrationForm from './pages/UserRegistration/UserRegistrationForm';
+import PixPayment from './pages/Pagamentos/PixPayment';
 const App = () => {
     return (
         <AuthProvider>
