@@ -23,11 +23,11 @@ const createPreference = async (req, res) => {
                     pending: "http://localhost:3000/pendente"
                 },
                 auto_return: "approved",
-                sandbox_init_point: true, // Ativa o modo SANDBOX
+                mode: 'sandbox' // ✅ Modo sandbox habilitado corretamente
             }
         });
 
-        res.json({ checkoutUrl: response.body.init_point });
+        res.json({ checkoutUrl: response.init_point });
     } catch (error) {
         console.error("Erro ao criar preferência:", error);
         res.status(500).json({ error: "Erro ao criar pagamento" });
