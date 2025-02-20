@@ -11,9 +11,9 @@ const createPreference = async (req, res) => {
             body: {
                 items: [
                     {
-                        title: "Acesso ao Banco de Questões",
+                        title: "Banco de Questões",
                         quantity: 1,
-                        unit_price: 29.90,
+                        unit_price: 89.90,
                         currency_id: "BRL"
                     }
                 ],
