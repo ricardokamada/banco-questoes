@@ -18,7 +18,7 @@ const createPreference = async (req, res) => {
                     }
                 ],
                 back_urls: {
-                    success: "http://localhost:3000/sucesso",
+                    success: "http://localhost:3000/dashboard",
                     failure: "http://localhost:3000/erro",
                     pending: "http://localhost:3000/pendente"
                 },

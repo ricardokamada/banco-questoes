@@ -6,6 +6,9 @@ import AuthProvider from './context/AuthContext'; // Importa o AuthProvider
 import HomePage from './pages/HomePage/HomePage';
 import UserRegistrationForm from './pages/UserRegistration/UserRegistrationForm';
 import CheckoutPage from './pages/Pagamentos/CheckoutPage';
+import UserDashboard from './pages/Usuario/UserDashboard'; // Importa o UserDashboard
+
+
 const App = () => {
     return (
         <AuthProvider>
@@ -13,7 +16,7 @@ const App = () => {
                 <Routes>
                     {/* Rota para a página inicial */}
                     <Route path="/" element={<HomePage />} />
-                    
+
                     {/* Rota para a página de login */}
                     <Route path="/login" element={<LoginPage />} />
 
@@ -25,6 +28,9 @@ const App = () => {
 
                     {/* Rota para pagamento pix */}
                     <Route path="/checkout" element={<CheckoutPage />} />
+
+                    {/* Rota para o dashboard do usuário */}
+                    <Route path="/dashboard" element={<UserDashboard />} />
 
 
                 </Routes>

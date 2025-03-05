@@ -12,7 +12,7 @@ const CheckoutButton = () => {
                 setPreferenceId(prefId);
 
                 if (window.MercadoPago) {
-                    const mp = new window.MercadoPago("APP_USR-c618fc99-6623-4c1c-ab58-9f6d333d390a", { locale: 'pt-BR' });
+                    const mp = new window.MercadoPago("TEST-0b70bd0a-9655-4356-8086-c658d09f6ba4", { locale: 'pt-BR' });
 
                     mp.bricks().create("wallet", "wallet_container", {
                         initialization: {
