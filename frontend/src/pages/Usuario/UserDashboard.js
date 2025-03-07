@@ -11,11 +11,15 @@ const UserDashboard = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (loading) {
+            return; // Aguarda o carregamento do estado de autenticação
+        }
+
         if (!user) {
             navigate('/login');
             return;
         }
-        
+
         const fetchUserData = async () => {
             try {
                 const response = await api.get('/user/profile');
@@ -36,19 +40,22 @@ const UserDashboard = () => {
 
         fetchUserData();
         fetchPaymentStatus();
-    }, [user, navigate]);
+    }, [user, loading, navigate]);
+
+    if (loading) {
+        return <div>Carregando...</div>;
+    }
 
     if (!user) {
         return <div className="text-center mt-5"><h3>Acesso negado. Faça login para continuar.</h3></div>;
     }
 
-    if (loading || !userData) {
+    if (!userData) {
         return <div>Carregando...</div>;
     }
 
     return (
         <div className="d-flex">
-            <SidebarHome />
             <div className="container mt-4">
                 <h2 className="mb-4">Dashboard do Usuário</h2>
                 <div className="card p-4 shadow-sm">
