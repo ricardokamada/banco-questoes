@@ -13,14 +13,9 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Middleware para processar JSON apenas em métodos específicos
-app.use((req, res, next) => {
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
-        bodyParser.json()(req, res, next);
-    } else {
-        next();
-    }
-});
+// Middleware para processar JSON em todas as requisições
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // Para suportar form-urlencoded
 
 // Middleware para log de requisições
 app.use((req, res, next) => {

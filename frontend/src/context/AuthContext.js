@@ -7,8 +7,6 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // Novo estado para indicar carregamento
 
-
-
   // Restaurar o usuário a partir do token no localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');

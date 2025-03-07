@@ -8,7 +8,6 @@ import UserRegistrationForm from './pages/UserRegistration/UserRegistrationForm'
 import CheckoutPage from './pages/Pagamentos/CheckoutPage';
 import UserDashboard from './pages/Usuario/UserDashboard'; // Importa o UserDashboard
 
-
 const App = () => {
     return (
         <AuthProvider>
@@ -31,8 +30,6 @@ const App = () => {
 
                     {/* Rota para o dashboard do usuário */}
                     <Route path="/dashboard" element={<UserDashboard />} />
-
-
                 </Routes>
             </Router>
         </AuthProvider>

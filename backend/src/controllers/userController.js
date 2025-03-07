@@ -48,8 +48,16 @@ const handleWebhook = async (req, res) => {
                 const paymentDetails = await getPaymentDetails(paymentId);
                 console.log('Detalhes do pagamento:', paymentDetails);
 
+                const userId = paymentDetails.external_reference;
+                if (!userId) {
+                    console.error("Erro: external_reference não encontrado no pagamento.");
+                    return res.status(400).json({ error: "external_reference não encontrado" });
+                }
+                
+                
+
                 if (paymentDetails.status === 'approved') {
-                    const userId = paymentDetails.metadata.user_id; // Supondo que você armazena o user_id nos metadados do pagamento
+                    const userId = paymentDetails.external_reference; // Use o campo external_reference
                     console.log('Atualizando status do pagamento para o usuário:', userId);
                     await User.updatePaymentStatus(userId, 'Aprovado', true);
                 }
@@ -66,16 +74,20 @@ const handleWebhook = async (req, res) => {
     }
 };
 
-
 const getPaymentDetails = async (paymentId) => {
-    // Implemente a lógica para buscar os detalhes do pagamento usando a API do MercadoPago
-    // Você pode usar a biblioteca axios para fazer a requisição
-    const response = await axios.get(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-        headers: {
-            Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
-        }
-    });
-    return response.data;
+    try {
+        console.log('Buscando detalhes do pagamento para ID:', paymentId);
+        const response = await axios.get(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+            headers: {
+                Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`
+            }
+        });
+        console.log('Resposta da API do MercadoPago:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao buscar detalhes do pagamento:', error);
+        throw error;
+    }
 };
 
 module.exports = { getUserProfile, getUserPaymentStatus, handleWebhook };
