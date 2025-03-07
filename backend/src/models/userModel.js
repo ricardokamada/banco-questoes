@@ -10,3 +10,12 @@ exports.getUserById = async (id) => {
     );
     return result.rows[0]; // Retorna o usuário ou undefined
 };
+
+// Atualizar status do pagamento e campo usuario_ativo
+exports.updatePaymentStatus = async (id, status_pagamento, usuario_ativo) => {
+    const result = await pool.query(
+        `UPDATE usuarios SET status_pagamento = $1, usuario_ativo = $2 WHERE usuario_id = $3 RETURNING *`,
+        [status_pagamento, usuario_ativo, id]
+    );
+    return result.rows[0];
+};
