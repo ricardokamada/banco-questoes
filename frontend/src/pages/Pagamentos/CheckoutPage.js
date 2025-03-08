@@ -1,14 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CheckoutButton from '../../components/common/CheckoutButton'; // Certifique-se do caminho correto
-import { AuthContext } from '../../context/AuthContext'; // Importe o contexto de autenticação
-import { Navigate } from 'react-router-dom'; // Importe o Navigate para redirecionamento
+import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const CheckoutPage = () => {
-    const { user, loading } = useContext(AuthContext); // Obtenha o usuário logado do contexto de autenticação
+    const { user, loading } = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(false);
 
     if (loading) {
-        return <div>Carregando...</div>;
+        return <div className="text-center py-5">Carregando...</div>;
     }
 
     if (!user) {
@@ -16,58 +17,52 @@ const CheckoutPage = () => {
     }
 
     const handleCheckout = async () => {
+        setIsLoading(true);
+    
         try {
-            console.log("User no Checkout------------:", user); // Verifique se o user está definido
-            console.log("User ID enviado------------:", user.id); // Verifique se o user.id está definido
-
-            const response = await fetch('http://localhost:3000/api/create-preference', { // Certifique-se de que a URL está correta
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userId: user.id }), // Enviando corretamente o ID do usuário
-            });
-
-            const data = await response.json();
-            console.log("Resposta da API:", data); // Adicione log para a resposta da API
-
-            if (data.checkoutUrl) {
-                window.location.href = data.checkoutUrl; // Redirecione para a URL de checkout do MercadoPago
+            console.log("Enviando requisição para o backend...");
+    
+            const response = await axios.post('http://localhost:3000/api/checkout/create_preference');
+    
+            console.log("Resposta do backend:", response.data);
+    
+            if (response.data && response.data.ticket_url) {
+                console.log("Redirecionando para:", response.data.ticket_url);
+                window.location.href = response.data.ticket_url; // Redireciona para pagamento
+            } else {
+                alert('Erro: O backend não retornou a URL de pagamento.');
             }
         } catch (error) {
             console.error('Erro ao criar preferência de pagamento:', error);
+            alert('Erro ao processar o pagamento. Verifique sua conexão.');
+        } finally {
+            setIsLoading(false);
         }
     };
+    
 
     return (
-        <div className="vh-100 d-flex flex-column bg-white overflow-hidden">
-            <div className="container flex-grow-1 py-1">
-                <div className="row g-3 justify-content-center align-items-center flex-grow-1">
-                    {/* PIX Payment */}
-                    <div className="col-lg-6">
-                        <div className="card h-100 border-0 shadow-lg" style={{ backgroundColor: '#2c2c2c' }}>
-                            <div className="card-body text-center p-5">
-                                <div className="bg-white p-4 rounded-4 mb-4">
-                                    <img
-                                        src="qrcode_pix.jpg"
-                                        alt="QR Code PIX"
-                                        className="img-fluid mb-3"
-                                        style={{ maxWidth: '200px' }}
-                                    />
-                                    <img
-                                        src="pix-logo.png"
-                                        alt="PIX Logo"
-                                        className="img-fluid mt-2"
-                                        style={{ maxWidth: '100px' }}
-                                    />
-                                </div>
+        <div className="container vh-100 d-flex flex-column justify-content-center align-items-center">
+            <div className="card p-4 shadow-lg text-center" style={{ maxWidth: '500px' }}>
+                <h2 className="mb-3">Finalize sua compra</h2>
+                <p className="text-muted">
+                    Garantimos total segurança e praticidade no pagamento. Com PIX, seu pagamento é confirmado
+                    instantaneamente e você tem acesso ao conteúdo imediatamente.
+                </p>
 
-                                {/* Botão MercadoPago */}
-                                <CheckoutButton onClick={handleCheckout} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ul className="list-group list-group-flush text-start mb-3">
+                    <li className="list-group-item">✔ Pagamento seguro com PIX</li>
+                    <li className="list-group-item">✔ Confirmação instantânea</li>
+                    <li className="list-group-item">✔ Acesso imediato ao conteúdo</li>
+                </ul>
+
+                <button 
+                    className="btn btn-primary w-100 mt-3" 
+                    onClick={handleCheckout} 
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Processando...' : 'Pagar com Pix'}
+                </button>
             </div>
         </div>
     );
