@@ -12,7 +12,7 @@ const CheckoutButton = () => {
                 setPreferenceId(prefId);
 
                 if (window.MercadoPago) {
-                    const mp = new window.MercadoPago("TEST-0b70bd0a-9655-4356-8086-c658d09f6ba4", { locale: 'pt-BR' });
+                    const mp = new window.MercadoPago("APP_USR-8035060522883387-030722-e3ac0ddd7038c148616e3bdf5eb4f588-76479450");  // Adicione sua chave pública do MercadoPago    
 
                     mp.bricks().create("wallet", "wallet_container", {
                         initialization: {

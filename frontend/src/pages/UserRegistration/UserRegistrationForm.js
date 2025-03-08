@@ -63,7 +63,7 @@ const UserRegistrationForm = () => {
           confirmButtonText: "OK",
         }).then(() => {
           
-            navigate("/pagamento-pix");
+            navigate("/checkout");
         });
       
         // Reset form

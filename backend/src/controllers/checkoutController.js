@@ -1,46 +1,48 @@
 require("dotenv").config();
-const { MercadoPagoConfig, Preference } = require('mercadopago');
+const { MercadoPagoConfig, Payment } = require('mercadopago');
 
 // Configurar MercadoPago
 const client = new MercadoPagoConfig({ accessToken: process.env.MERCADO_PAGO_ACCESS_TOKEN });
 
+const payment = new Payment(client);
+
 const createPreference = async (req, res) => {
     try {
-        console.log("Requisição recebida no backend:", req.body);
+        // Step 4: Create the request object
+        const body = {
+            transaction_amount: 5.00,
+            description: 'Banco de questoes',
+            payment_method_id: 'pix',
+            payer: {
+                email: 'sdsfsdf@gmail.com'
+            },
+        };
 
-        const { userId } = req.body; // Supondo que você está recebendo o userId no corpo da requisição
-        console.log("UserId recebido:", userId);
-
-        const preference = new Preference(client);
-
-        const response = await preference.create({
-            body: {
-                items: [
-                    {
-                        title: "Banco de Questões",
-                        quantity: 1,
-                        unit_price: 89.90,
-                        currency_id: "BRL"
-                    }
-                ],
-                back_urls: {
-                    success: "http://localhost:5000/dashboard",
-                    failure: "http://localhost:5000/erro",
-                    pending: "http://localhost:5000/pendente"
-                },
-                auto_return: "approved",
-                external_reference: userId, // Adicione o userId aqui
-                mode: 'sandbox' // ✅ Modo sandbox habilitado corretamente
-            }
-        });
-
-        console.log("Resposta da criação de preferência:", response); // Adicione log para a resposta da criação de preferência
-
-        res.json({ checkoutUrl: response.init_point });
+        payment.create({ body }).then(console.log).catch(console.log);
     } catch (error) {
         console.error('Erro ao criar preferência de pagamento:', error);
         res.status(500).json({ error: 'Erro ao criar preferência de pagamento' });
     }
 };
 
-module.exports = { createPreference };
+const paymentNotification = async (req, res) => {
+    try {
+        console.log("Notificação de pagamento recebida:", req.body);
+
+        // Processar a notificação de pagamento aqui
+        const { id, topic } = req.body;
+
+        if (topic === 'payment') {
+            // Lógica para lidar com a notificação de pagamento
+            console.log(`Pagamento recebido com ID: ${id}`);
+            // Atualizar o status do pagamento no banco de dados, etc.
+        }
+
+        res.status(200).send('Notificação recebida com sucesso');
+    } catch (error) {
+        console.error('Erro ao processar notificação de pagamento:', error);
+        res.status(500).json({ error: 'Erro ao processar notificação de pagamento' });
+    }
+};
+
+module.exports = { createPreference, paymentNotification };
